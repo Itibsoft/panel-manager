@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Assets.Project.Scripts.UI.Common
+namespace Itibsoft.PanelManager
 {
     public class PanelDispatcher : MonoBehaviour
     {

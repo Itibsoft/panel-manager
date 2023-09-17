@@ -1,7 +1,4 @@
-﻿using Assets.Project.Scripts.UI.EventsCallbacks;
-using Project.Scripts.PanelManager.EventsCallbacks;
-
-namespace Assets.Project.Scripts.UI
+﻿namespace Itibsoft.PanelManager
 {
     public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel> where TPanel : IPanel
     {

@@ -1,7 +1,6 @@
 ﻿using System;
-using Project.Scripts.PanelManager.Enum;
 
-namespace Assets.Project.Scripts.UI.Common
+namespace Itibsoft.PanelManager
 {
     public class PanelAttribute : Attribute
     {

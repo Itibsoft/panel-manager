@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Assets.Project.Scripts.UI;
 
-namespace Project.Scripts.PanelManager.EventsCallbacks
+namespace Itibsoft.PanelManager
 {
     public class CallbackDispatcher
     {

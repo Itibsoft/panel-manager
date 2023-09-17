@@ -1,7 +1,4 @@
-using Assets.Project.Scripts.UI;
-using Assets.Project.Scripts.UI.Common;
-
-namespace Project.Scripts.PanelManager.Builder
+namespace Itibsoft.PanelManager
 {
     public class PanelManagerBuilder
     {

@@ -1,4 +1,4 @@
-﻿namespace Assets.Project.Scripts.UI.EventsCallbacks
+﻿namespace Itibsoft.PanelManager
 {
     public class ClosePanelCallback : IPanelCallback
     {

@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using UnityEngine;
 
-namespace Assets.Project.Scripts.UI.Common
+namespace Itibsoft.PanelManager
 {
     public static class PanelExtensions
     {

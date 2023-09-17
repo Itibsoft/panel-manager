@@ -1,8 +1,7 @@
 ﻿using System;
-using Project.Scripts.PanelManager.Enum;
 using UnityEngine;
 
-namespace Assets.Project.Scripts.UI
+namespace Itibsoft.PanelManager
 {
 	public interface IPanel : IDisposable
 	{

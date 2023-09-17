@@ -1,6 +1,4 @@
-using Assets.Project.Scripts.UI.Common;
-
-namespace Assets.Project.Scripts.UI
+namespace Itibsoft.PanelManager
 {
     public interface IPanelControllerFactory
     {

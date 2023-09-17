@@ -1,4 +1,4 @@
-﻿namespace Project.Scripts.PanelManager.Enum
+﻿namespace Itibsoft.PanelManager
 {
     public enum PanelType : byte
     {

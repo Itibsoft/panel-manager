@@ -1,15 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Assets.Project.Scripts.UI;
-using Assets.Project.Scripts.UI.Common;
-using Assets.Project.Scripts.UI.EventsCallbacks;
-using Assets.Project.Scripts.UI.Factories;
-using Project.Scripts.PanelManager.Enum;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Project.Scripts.PanelManager
+namespace Itibsoft.PanelManager
 {
     public class PanelManager : IPanelManager
     {

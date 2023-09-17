@@ -1,8 +1,7 @@
 ﻿using JetBrains.Annotations;
-using Project.Scripts.PanelManager.Enum;
 using UnityEngine;
 
-namespace Assets.Project.Scripts.UI
+namespace Itibsoft.PanelManager
 {
 	public abstract class PanelBase : MonoBehaviour, IPanel
 	{

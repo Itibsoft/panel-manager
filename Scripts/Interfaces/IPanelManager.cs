@@ -1,4 +1,4 @@
-﻿namespace Assets.Project.Scripts.UI
+﻿namespace Itibsoft.PanelManager
 {
 	public interface IPanelManager
 	{

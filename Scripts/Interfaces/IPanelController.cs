@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Assets.Project.Scripts.UI
+﻿namespace Itibsoft.PanelManager
 {
     public delegate void PanelCallbackDelegate<in TCallback>(TCallback callback) where TCallback : IPanelCallback;
     public interface IPanelController

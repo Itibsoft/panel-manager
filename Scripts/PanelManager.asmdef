@@ -1,6 +1,6 @@
 {
     "name": "PanelManager",
-    "rootNamespace": "Itibsoft.PanelManager",
+    "rootNamespace": "Itibsoft",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

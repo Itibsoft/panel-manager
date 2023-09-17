@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Reflection;
-using Assets.Project.Scripts.UI.Common;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Assets.Project.Scripts.UI.Factories
+namespace Itibsoft.PanelManager
 {
     public class DefaultPanelControllerFactory : IPanelControllerFactory
     {
