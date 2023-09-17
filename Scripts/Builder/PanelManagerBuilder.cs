@@ -24,7 +24,7 @@ namespace Itibsoft.PanelManager
             return this;
         }
 
-        public PanelManager Build()
+        public IPanelManager Build()
         {
             return new PanelManager(_panelControllerFactory, _panelDispatcher);
         }
