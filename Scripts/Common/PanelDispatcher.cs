@@ -7,9 +7,9 @@ namespace Itibsoft.PanelManager
 {
     public class PanelDispatcher : MonoBehaviour
     {
-        private Transform _windowContent;
-        private Transform _overlayContent;
-        private Transform _cashedContent;
+        [SerializeField] private Transform _windowContent;
+        [SerializeField] private Transform _overlayContent;
+        [SerializeField] private Transform _cashedContent;
 
         public static PanelDispatcher Create()
         {
