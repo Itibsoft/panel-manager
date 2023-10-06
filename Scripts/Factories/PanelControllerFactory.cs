@@ -11,7 +11,7 @@ namespace Itibsoft.PanelManager
             _panelFactory = panelFactory;
         }
         
-        public TPanelController Create<TPanelController>(PanelAttribute meta) where TPanelController : IPanelController
+        public virtual TPanelController Create<TPanelController>(PanelAttribute meta) where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
             
