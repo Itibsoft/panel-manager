@@ -4,18 +4,18 @@ namespace Itibsoft.PanelManager
 {
     public class PanelControllerFactory : IPanelControllerFactory
     {
-        private readonly IPanelFactory _panelFactory;
+        protected readonly IPanelFactory PanelFactory;
         
         public PanelControllerFactory(IPanelFactory panelFactory)
         {
-            _panelFactory = panelFactory;
+            PanelFactory = panelFactory;
         }
         
         public virtual TPanelController Create<TPanelController>(PanelAttribute meta) where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
             
-            var panel = _panelFactory.Create(meta);
+            var panel = PanelFactory.Create(meta);
             
             var extraArguments = new object[]
             {
