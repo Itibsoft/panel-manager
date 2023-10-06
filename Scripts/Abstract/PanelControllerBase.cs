@@ -38,5 +38,16 @@
         {
             _callbackDispatcher.UnRegisterCallback(callback);
         }
+
+        public void Release()
+        {
+            var closeCallback = new ReleasePanelCallback(this);
+            _callbackDispatcher.InvokeCallback(closeCallback);
+        }
+
+        public virtual void Dispose()
+        {
+            
+        }
     }
 }

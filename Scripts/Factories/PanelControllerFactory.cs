@@ -1,23 +1,21 @@
 ﻿using System;
-using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Itibsoft.PanelManager
 {
-    public class DefaultPanelControllerFactory : IPanelControllerFactory
+    public class PanelControllerFactory : IPanelControllerFactory
     {
+        private readonly IPanelFactory _panelFactory;
+        
+        public PanelControllerFactory(IPanelFactory panelFactory)
+        {
+            _panelFactory = panelFactory;
+        }
+        
         public TPanelController Create<TPanelController>(PanelAttribute meta) where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
             
-            var panelPrefab = Resources.Load<PanelBase>(meta.AssetId);
-
-            if (panelPrefab == default)
-            {
-                throw new Exception($"Not found asset in Resources for path: {meta.AssetId}");
-            }
-
-            var panel = Object.Instantiate(panelPrefab);
+            var panel = _panelFactory.Create(meta);
             
             var extraArguments = new object[]
             {

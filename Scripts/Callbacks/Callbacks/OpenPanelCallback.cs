@@ -2,7 +2,7 @@
 {
     public class OpenPanelCallback : IPanelCallback
     {
-        public IPanel Panel { get; }
+        public readonly IPanel Panel;
 
         public OpenPanelCallback(IPanel panel)
         {

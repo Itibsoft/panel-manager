@@ -16,7 +16,16 @@ namespace Itibsoft.PanelManager
             _panelControllerFactory = panelControllerFactory;
             _panelDispatcher = panelDispatcher;
 
-            _panelControllerFactory ??= new DefaultPanelControllerFactory();
+            if (_panelControllerFactory == default)
+            {
+#if ADDRESSABLES
+                var panelFactory = new External.AddressablesPanelFactory();
+#else
+                var panelFactory = new ResourcesPanelFactory();
+#endif
+                _panelControllerFactory = new PanelControllerFactory(panelFactory);
+            }
+            
             _panelDispatcher ??= PanelDispatcher.Create();
 
             _panelsCashed = new Dictionary<ushort, IPanelController>();
@@ -55,10 +64,36 @@ namespace Itibsoft.PanelManager
 
             controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
             controller.RegisterCallback<ClosePanelCallback>(OnHandleClosePanel);
+            controller.RegisterCallback<ReleasePanelCallback>(OnReleasePanelHandle);
 
             _panelsCashed.Add(hash, controller);
             
             return (TPanelController)controller;
+        }
+
+        private void OnReleasePanelHandle(ReleasePanelCallback callback)
+        {
+            var controller = callback.PanelController;
+            var panel = controller.GetPanel();
+
+            var type = controller.GetType();
+            var hash = type.GetStableHash();
+            
+            panel.Dispose();
+            panel.SetActive(false);
+            
+            controller.Dispose();
+            
+            var panelGameObject = panel.GetGameObject();
+            
+#if ADDRESSABLES
+            UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);
+#else
+            UnityEngine.Object.DestroyImmediate(panelGameObject);
+            UnityEngine.Resources.UnloadUnusedAssets();
+#endif
+
+            _panelsCashed.Remove(hash);
         }
 
         #endregion

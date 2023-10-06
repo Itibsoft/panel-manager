@@ -14,9 +14,7 @@ namespace Itibsoft.PanelManager
             {
                 return 0;
             }
-            
-            Debug.Log($"FullName: {key}");
-            
+
             unchecked
             {
                 return (ushort)key.Aggregate(23, (current, c) => current * 31 + c);

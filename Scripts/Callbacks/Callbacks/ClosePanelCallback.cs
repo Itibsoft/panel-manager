@@ -2,7 +2,7 @@
 {
     public class ClosePanelCallback : IPanelCallback
     {
-        public IPanel Panel { get; }
+        public readonly IPanel Panel;
 
         public ClosePanelCallback(IPanel panel)
         {

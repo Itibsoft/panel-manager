@@ -34,6 +34,11 @@ namespace Itibsoft.PanelManager
 			_rectTransform.localScale = Vector3.one;
 		}
 
+		public GameObject GetGameObject()
+		{
+			return gameObject;
+		}
+
 		public virtual void Dispose()
 		{
 			
