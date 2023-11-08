@@ -9,7 +9,7 @@ namespace Itibsoft.PanelManager.External
 
         public PanelManagerInstaller(PanelDispatcher panelDispatcher = default)
         {
-            _panelDispatcher = panelDispatcher == default ? panelDispatcher : PanelDispatcher.Create();
+            _panelDispatcher = panelDispatcher != default ? panelDispatcher : PanelDispatcher.Create();
         }
 
         public override void InstallBindings()
