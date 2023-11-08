@@ -6,12 +6,19 @@ namespace Itibsoft.PanelManager
 {
     public class PanelManager : IPanelManager
     {
-        private IPanelControllerFactory _panelControllerFactory;
-        private PanelDispatcher _panelDispatcher;
+        private readonly IPanelControllerFactory _panelControllerFactory;
+        private readonly PanelDispatcher _panelDispatcher;
         
-        private Dictionary<ushort, IPanelController> _panelsCashed;
+        private readonly Dictionary<ushort, IPanelController> _panelsCashed;
 
-        public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
+        public PanelManager
+        (
+            IPanelControllerFactory panelControllerFactory, 
+            PanelDispatcher panelDispatcher
+#if EXTENJECT
+            ,Zenject.DiContainer diContainer
+#endif
+        )
         {
             _panelControllerFactory = panelControllerFactory;
             _panelDispatcher = panelDispatcher;
@@ -23,7 +30,12 @@ namespace Itibsoft.PanelManager
 #else
                 var panelFactory = new ResourcesPanelFactory();
 #endif
+#if EXTENJECT
+                _panelControllerFactory = new External.ExtenjectPanelControllerFactory(panelFactory, diContainer);
+#else
                 _panelControllerFactory = new PanelControllerFactory(panelFactory);
+#endif
+
             }
             
             _panelDispatcher ??= PanelDispatcher.Create();
