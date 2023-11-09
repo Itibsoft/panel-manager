@@ -5,7 +5,7 @@ namespace Itibsoft.PanelManager
 {
 	public abstract class PanelBase : MonoBehaviour, IPanel
 	{
-		public PanelType Type { get; [UsedImplicitly] protected set; }
+		public PanelAttribute Meta { get; [UsedImplicitly] protected set; }
 
 		private RectTransform _rectTransform;
 
@@ -32,6 +32,11 @@ namespace Itibsoft.PanelManager
 			_rectTransform.offsetMax = Vector2.zero;
 			
 			_rectTransform.localScale = Vector3.one;
+		}
+
+		public void SetOrder(int order)
+		{
+			_rectTransform.SetSiblingIndex(order);
 		}
 
 		public GameObject GetGameObject()

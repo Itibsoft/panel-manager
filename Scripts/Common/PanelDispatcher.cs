@@ -1,4 +1,3 @@
-using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,6 +10,8 @@ namespace Itibsoft.PanelManager
         [SerializeField] private Transform _overlayContent;
         [SerializeField] private Transform _cashedContent;
 
+        private RectTransform _rectTransform;
+
         public static PanelDispatcher Create()
         {
             var components = new[]
@@ -20,7 +21,7 @@ namespace Itibsoft.PanelManager
                 typeof(CanvasScaler),
                 typeof(GraphicRaycaster)
             };
-            
+
             var instance = new GameObject("[PanelDispatcher]", components)
             {
                 transform =
@@ -48,34 +49,33 @@ namespace Itibsoft.PanelManager
             graphicRaycaster.ignoreReversedGraphics = true;
             graphicRaycaster.blockingObjects = GraphicRaycaster.BlockingObjects.None;
 
-            CreateGroup("Windows [Content]", "_windowContent");
-            CreateGroup("Overlays [Content]", "_overlayContent");
-            CreateGroup("Cached [Content]", "_cashedContent");
+            CreateGroup("Windows [Content]", instance.transform, out dispatcher._windowContent);
+            CreateGroup("Overlays [Content]", instance.transform, out dispatcher._overlayContent);
+            CreateGroup("Cached [Content]", instance.transform, out dispatcher._cashedContent);
 
             var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             eventSystem.transform.SetParent(instance.transform);
-            
+
             DontDestroyOnLoad(instance);
 
             return instance.GetComponent<PanelDispatcher>();
+        }
 
-            void CreateGroup(string name, string fieldName)
-            {
-                var group = new GameObject(name, typeof(RectTransform));
-                group.transform.SetParent(instance.transform);
+        private static void CreateGroup(string name, Component instance, out Transform field)
+        {
+            var group = new GameObject(name, typeof(RectTransform));
+            group.transform.SetParent(instance.transform);
 
-                var field = dispatcher.GetType().GetField(fieldName, BindingFlags.NonPublic | BindingFlags.Instance);
-                if (field != null) field.SetValue(dispatcher, group.transform);
+            field = group.transform;
 
-                var rectTransform = group.GetComponent<RectTransform>();
-                
-                rectTransform.anchorMin = Vector2.zero;
-                rectTransform.anchorMax = Vector2.one;
-                rectTransform.offsetMin = Vector2.zero;
-                rectTransform.offsetMax = Vector2.zero;
-			
-                rectTransform.localScale = Vector3.one;
-            }
+            var rectTransform = group.GetComponent<RectTransform>();
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+
+            rectTransform.localScale = Vector3.one;
         }
 
         public void SetWindow(IPanel panel)
@@ -83,6 +83,7 @@ namespace Itibsoft.PanelManager
             panel.SetParent(_windowContent);
             panel.SetStretch();
             panel.SetActive(true);
+            panel.SetOrder(panel.Meta.Order);
         }
 
         public void SetOverlay(IPanel panel)
@@ -90,6 +91,7 @@ namespace Itibsoft.PanelManager
             panel.SetParent(_overlayContent);
             panel.SetStretch();
             panel.SetActive(true);
+            panel.SetOrder(panel.Meta.Order);
         }
 
         public void Cache(IPanel panel)

@@ -7,6 +7,7 @@ namespace Itibsoft.PanelManager
     public class PanelAttribute : PreserveAttribute
     {
         public PanelType PanelType;
+        public int Order;
         public string AssetId;
     }
 }

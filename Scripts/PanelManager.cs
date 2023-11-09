@@ -57,17 +57,8 @@ namespace Itibsoft.PanelManager
             controller = _panelControllerFactory.Create<TPanelController>(meta);
 
             var panel = controller.GetPanel();
-
-            var propertyType = panel.GetType().GetProperty("Type",
-                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-
-            if (propertyType != null)
-            {
-                var setter = propertyType.GetSetMethod(true);
-
-                if (setter != null) setter.Invoke(panel, new object[] { meta.PanelType });
-                else throw new Exception("No set method found for property 'Type'");
-            }
+            
+            panel.SetMeta(meta);
 
             _panelDispatcher.Cache(panel);
 
@@ -116,8 +107,8 @@ namespace Itibsoft.PanelManager
         private void OnHandleOpenPanel(OpenPanelCallback callback)
         {
             var panel = callback.Panel;
-
-            switch (panel.Type)
+            
+            switch (panel.Meta.PanelType)
             {
                 case PanelType.Window:
                     _panelDispatcher.SetWindow(panel);
