@@ -4,21 +4,24 @@ using System.Reflection;
 
 namespace Itibsoft.PanelManager
 {
+#if EXTENJECT
+    [JetBrains.Annotations.UsedImplicitly]
+#endif
     public class PanelManager : IPanelManager
     {
         private readonly IPanelControllerFactory _panelControllerFactory;
         private readonly PanelDispatcher _panelDispatcher;
-        
-        private readonly Dictionary<ushort, IPanelController> _panelsCashed;
 
-        public PanelManager
-        (
-            IPanelControllerFactory panelControllerFactory, 
-            PanelDispatcher panelDispatcher
+        private readonly Dictionary<ushort, IPanelController> _panelsCashed = new();
+
 #if EXTENJECT
-            ,Zenject.DiContainer diContainer
-#endif
-        )
+        public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
+        {
+            _panelControllerFactory = panelControllerFactory;
+            _panelDispatcher = panelDispatcher;
+        }
+#else
+        public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
         {
             _panelControllerFactory = panelControllerFactory;
             _panelDispatcher = panelDispatcher;
@@ -30,48 +33,44 @@ namespace Itibsoft.PanelManager
 #else
                 var panelFactory = new ResourcesPanelFactory();
 #endif
-#if EXTENJECT
-                _panelControllerFactory = new External.ExtenjectPanelControllerFactory(panelFactory, diContainer);
-#else
+
                 _panelControllerFactory = new PanelControllerFactory(panelFactory);
+            }
+
+            _panelDispatcher ??= PanelDispatcher.Create();
+        }
 #endif
 
-            }
-            
-            _panelDispatcher ??= PanelDispatcher.Create();
-
-            _panelsCashed = new Dictionary<ushort, IPanelController>();
-        }
-
         #region Public API (Methods)
-        
+
         public TPanelController LoadPanel<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
             var hash = type.GetStableHash();
             var meta = GetMeta<TPanelController>();
-            
+
             if (_panelsCashed.TryGetValue(hash, out var controller))
             {
                 return (TPanelController)controller;
             }
-            
+
             controller = _panelControllerFactory.Create<TPanelController>(meta);
-            
+
             var panel = controller.GetPanel();
 
-            var propertyType = panel.GetType().GetProperty("Type", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            
+            var propertyType = panel.GetType().GetProperty("Type",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
             if (propertyType != null)
             {
                 var setter = propertyType.GetSetMethod(true);
-                
-                if (setter != null)  setter.Invoke(panel, new object[] { meta.PanelType });
+
+                if (setter != null) setter.Invoke(panel, new object[] { meta.PanelType });
                 else throw new Exception("No set method found for property 'Type'");
             }
 
             _panelDispatcher.Cache(panel);
-            
+
             InvokeConstructorMethod(panel);
 
             controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
@@ -79,7 +78,7 @@ namespace Itibsoft.PanelManager
             controller.RegisterCallback<ReleasePanelCallback>(OnReleasePanelHandle);
 
             _panelsCashed.Add(hash, controller);
-            
+
             return (TPanelController)controller;
         }
 
@@ -90,14 +89,14 @@ namespace Itibsoft.PanelManager
 
             var type = controller.GetType();
             var hash = type.GetStableHash();
-            
+
             panel.Dispose();
             panel.SetActive(false);
-            
+
             controller.Dispose();
-            
+
             var panelGameObject = panel.GetGameObject();
-            
+
 #if ADDRESSABLES
             UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);
 #else
@@ -120,8 +119,12 @@ namespace Itibsoft.PanelManager
 
             switch (panel.Type)
             {
-                case PanelType.Window: _panelDispatcher.SetWindow(panel); break;
-                case PanelType.Overlay: _panelDispatcher.SetOverlay(panel); break;
+                case PanelType.Window:
+                    _panelDispatcher.SetWindow(panel);
+                    break;
+                case PanelType.Overlay:
+                    _panelDispatcher.SetOverlay(panel);
+                    break;
                 default: throw new ArgumentOutOfRangeException();
             }
 
@@ -131,7 +134,7 @@ namespace Itibsoft.PanelManager
         private void OnHandleClosePanel(ClosePanelCallback callback)
         {
             var panel = callback.Panel;
-            
+
             InvokeOnCloseMethod(panel);
 
             _panelDispatcher.Cache(panel);
