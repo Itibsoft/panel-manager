@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Reflection;
+using Itibsoft.PanelManager.Reflections;
 
 namespace Itibsoft.PanelManager
 {
@@ -47,7 +47,7 @@ namespace Itibsoft.PanelManager
         {
             var type = typeof(TPanelController);
             var hash = type.GetStableHash();
-            var meta = GetMeta<TPanelController>();
+            var meta = PanelReflector.GetMeta<TPanelController>();
 
             if (_panelsCashed.TryGetValue(hash, out var controller))
             {
@@ -57,12 +57,12 @@ namespace Itibsoft.PanelManager
             controller = _panelControllerFactory.Create<TPanelController>(meta);
 
             var panel = controller.GetPanel();
-            
+
             panel.SetMeta(meta);
 
             _panelDispatcher.Cache(panel);
 
-            InvokeConstructorMethod(panel);
+            PanelReflector.InvokeConstructorMethod(panel);
 
             controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
             controller.RegisterCallback<ClosePanelCallback>(OnHandleClosePanel);
@@ -107,7 +107,7 @@ namespace Itibsoft.PanelManager
         private void OnHandleOpenPanel(OpenPanelCallback callback)
         {
             var panel = callback.Panel;
-            
+
             switch (panel.Meta.PanelType)
             {
                 case PanelType.Window:
@@ -119,48 +119,16 @@ namespace Itibsoft.PanelManager
                 default: throw new ArgumentOutOfRangeException();
             }
 
-            InvokeOnOpenMethod(panel);
+            PanelReflector.InvokeOnOpenMethod(panel);
         }
 
         private void OnHandleClosePanel(ClosePanelCallback callback)
         {
             var panel = callback.Panel;
 
-            InvokeOnCloseMethod(panel);
+            PanelReflector.InvokeOnCloseMethod(panel);
 
             _panelDispatcher.Cache(panel);
-        }
-
-        #endregion
-
-        #region Reflection Utils
-
-        private PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
-        {
-            var type = typeof(TPanelController);
-            var meta = type.GetCustomAttribute<PanelAttribute>();
-
-            if (meta == default)
-            {
-                throw new Exception($"Not found Attribute.Panel for controller: {type.Name}");
-            }
-
-            return meta;
-        }
-
-        private void InvokeConstructorMethod(IPanel panel) => InvokeMethodForName(panel, "Constructor");
-        private void InvokeOnOpenMethod(IPanel panel) => InvokeMethodForName(panel, "OnOpen");
-        private void InvokeOnCloseMethod(IPanel panel) => InvokeMethodForName(panel, "OnClose");
-
-        private void InvokeMethodForName(object instance, string nameMethod)
-        {
-            const BindingFlags BINDING_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-            var method = instance.GetType().GetMethod(nameMethod, BINDING_FLAGS);
-
-            if (method != default)
-            {
-                method.Invoke(instance, default);
-            }
         }
 
         #endregion

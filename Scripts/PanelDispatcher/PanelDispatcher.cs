@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -52,9 +51,9 @@ namespace Itibsoft.PanelManager
             graphicRaycaster.ignoreReversedGraphics = true;
             graphicRaycaster.blockingObjects = GraphicRaycaster.BlockingObjects.None;
 
-            CreateGroup("Windows [Content]", instance.transform, out dispatcher._windowContent);
-            CreateGroup("Overlays [Content]", instance.transform, out dispatcher._overlayContent);
-            CreateGroup("Cached [Content]", instance.transform, out dispatcher._cashedContent);
+            CreateGroup("Windows [Content]", out dispatcher._windowContent);
+            CreateGroup("Overlays [Content]", out dispatcher._overlayContent);
+            CreateGroup("Cached [Content]", out dispatcher._cashedContent);
 
             var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
             eventSystem.transform.SetParent(instance.transform);
@@ -62,23 +61,23 @@ namespace Itibsoft.PanelManager
             DontDestroyOnLoad(instance);
 
             return instance.GetComponent<PanelDispatcher>();
-        }
 
-        private static void CreateGroup(string name, Component instance, out RectTransform field)
-        {
-            var group = new GameObject(name, typeof(RectTransform));
-            group.transform.SetParent(instance.transform);
+            void CreateGroup(string name, out RectTransform field)
+            {
+                var group = new GameObject(name, typeof(RectTransform));
+                group.transform.SetParent(instance.transform);
 
-            field = (RectTransform)group.transform;
+                field = (RectTransform)group.transform;
 
-            var rectTransform = group.GetComponent<RectTransform>();
+                var rectTransform = group.GetComponent<RectTransform>();
 
-            rectTransform.anchorMin = Vector2.zero;
-            rectTransform.anchorMax = Vector2.one;
-            rectTransform.offsetMin = Vector2.zero;
-            rectTransform.offsetMax = Vector2.zero;
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
 
-            rectTransform.localScale = Vector3.one;
+                rectTransform.localScale = Vector3.one;
+            }
         }
 
         public void SetWindow(IPanel panel) => PanelForContent(panel, true);
@@ -89,11 +88,11 @@ namespace Itibsoft.PanelManager
         {
             RectTransform content;
             var orderedPanels = new List<IPanel>();
-            
+
             if (isOpen)
             {
                 panel.SetActive(true);
-                
+
                 _contentsForPanels.GetOrCreateNew(PanelType.Cached).Remove(panel);
                 _contentsForPanels.AddOrCreateNew(panel.Meta.PanelType, panel, out var panels);
 
@@ -115,10 +114,10 @@ namespace Itibsoft.PanelManager
                 content = _cashedContent;
                 panel.SetActive(false);
             }
-            
+
             panel.SetParent(content);
             panel.SetStretch();
-            
+
             for (int index = 0, count = orderedPanels.Count; index < count; index++)
             {
                 var panelOrdered = orderedPanels[index];
