@@ -1,4 +1,4 @@
-﻿#if EXTENJECT 
+﻿#if true 
 
 using System;
 using Zenject;

@@ -9,10 +9,20 @@ namespace Itibsoft.PanelManager
 #endif
     public class PanelManager : IPanelManager
     {
+        #region Fields
+
+        #region Private Fields
+
         private readonly IPanelControllerFactory _panelControllerFactory;
         private readonly PanelDispatcher _panelDispatcher;
 
         private readonly Dictionary<ushort, IPanelController> _panelsCashed = new();
+
+        #endregion
+
+        #endregion;
+
+        #region Constructors
 
 #if EXTENJECT
         public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
@@ -40,6 +50,8 @@ namespace Itibsoft.PanelManager
             _panelDispatcher ??= PanelDispatcher.Create();
         }
 #endif
+
+        #endregion
 
         #region Public API (Methods)
 
@@ -134,5 +146,23 @@ namespace Itibsoft.PanelManager
         #endregion
 
         #endregion
+
+#if EXTENJECT
+        [JetBrains.Annotations.UsedImplicitly]
+        public class Factory : Zenject.IFactory<PanelManager>
+        {
+            private readonly Zenject.DiContainer _diContainer;
+
+            public Factory(Zenject.DiContainer diContainer)
+            {
+                _diContainer = diContainer;
+            }
+
+            public PanelManager Create()
+            {
+                return _diContainer.Instantiate<PanelManager>();
+            }
+        }
+#endif
     }
 }
