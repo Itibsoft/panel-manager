@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿#if EXTENJECT
 
-#if EXTENJECT
+using UnityEngine;
 
 namespace Itibsoft.PanelManager.External
 {

@@ -108,7 +108,6 @@ namespace Itibsoft.PanelManager
             else
             {
                 _contentsForPanels.AddOrCreateNew(PanelType.Cached, panel);
-
                 _contentsForPanels.GetOrCreateNew(panel.Meta.PanelType).Remove(panel);
 
                 content = _cashedContent;
