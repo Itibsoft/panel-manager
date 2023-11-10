@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -6,11 +9,11 @@ namespace Itibsoft.PanelManager
 {
     public class PanelDispatcher : MonoBehaviour
     {
-        [SerializeField] private Transform _windowContent;
-        [SerializeField] private Transform _overlayContent;
-        [SerializeField] private Transform _cashedContent;
+        [SerializeField] private RectTransform _windowContent;
+        [SerializeField] private RectTransform _overlayContent;
+        [SerializeField] private RectTransform _cashedContent;
 
-        private RectTransform _rectTransform;
+        private readonly Dictionary<PanelType, List<IPanel>> _contentsForPanels = new();
 
         public static PanelDispatcher Create()
         {
@@ -61,12 +64,12 @@ namespace Itibsoft.PanelManager
             return instance.GetComponent<PanelDispatcher>();
         }
 
-        private static void CreateGroup(string name, Component instance, out Transform field)
+        private static void CreateGroup(string name, Component instance, out RectTransform field)
         {
             var group = new GameObject(name, typeof(RectTransform));
             group.transform.SetParent(instance.transform);
 
-            field = group.transform;
+            field = (RectTransform)group.transform;
 
             var rectTransform = group.GetComponent<RectTransform>();
 
@@ -78,26 +81,49 @@ namespace Itibsoft.PanelManager
             rectTransform.localScale = Vector3.one;
         }
 
-        public void SetWindow(IPanel panel)
-        {
-            panel.SetParent(_windowContent);
-            panel.SetStretch();
-            panel.SetActive(true);
-            panel.SetOrder(panel.Meta.Order);
-        }
+        public void SetWindow(IPanel panel) => PanelForContent(panel, true);
+        public void SetOverlay(IPanel panel) => PanelForContent(panel, true);
+        public void Cache(IPanel panel) => PanelForContent(panel, false);
 
-        public void SetOverlay(IPanel panel)
+        private void PanelForContent(IPanel panel, bool isOpen)
         {
-            panel.SetParent(_overlayContent);
-            panel.SetStretch();
-            panel.SetActive(true);
-            panel.SetOrder(panel.Meta.Order);
-        }
+            RectTransform content;
+            var orderedPanels = new List<IPanel>();
+            
+            if (isOpen)
+            {
+                panel.SetActive(true);
+                
+                _contentsForPanels.GetOrCreateNew(PanelType.Cached).Remove(panel);
+                _contentsForPanels.AddOrCreateNew(panel.Meta.PanelType, panel, out var panels);
 
-        public void Cache(IPanel panel)
-        {
-            panel.SetParent(_cashedContent);
-            panel.SetActive(false);
+                content = panel.Meta.PanelType switch
+                {
+                    PanelType.Window => _windowContent,
+                    PanelType.Overlay => _overlayContent,
+                    _ => default
+                };
+
+                orderedPanels = panels.OrderBy(panelOrdered => panelOrdered.Meta.Order).ToList();
+            }
+            else
+            {
+                _contentsForPanels.AddOrCreateNew(PanelType.Cached, panel);
+
+                _contentsForPanels.GetOrCreateNew(panel.Meta.PanelType).Remove(panel);
+
+                content = _cashedContent;
+                panel.SetActive(false);
+            }
+            
+            panel.SetParent(content);
+            panel.SetStretch();
+            
+            for (int index = 0, count = orderedPanels.Count; index < count; index++)
+            {
+                var panelOrdered = orderedPanels[index];
+                panelOrdered.RectTransform.SetSiblingIndex(index);
+            }
         }
     }
 }
