@@ -62,7 +62,12 @@ namespace Itibsoft.PanelManager.External
 
             container
                 .Bind<IPanelControllerFactory>()
-                .To<External.ExtenjectPanelControllerFactory>()
+                .To<ExtenjectPanelControllerFactory>()
+                .AsSingle()
+                .Lazy();
+
+            Container
+                .Bind<PanelManager.Factory>()
                 .AsSingle()
                 .Lazy();
         }
