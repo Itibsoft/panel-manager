@@ -1,12 +1,11 @@
 {
   "name": "com.itibsoft.panelmanager",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "displayName": "Panel Manager",
   "description": "This system is designed to work with User Interfaces (UI). It allows you to create interfaces without thinking about how to call this or that window, as everything is handled by the manager.",
   "unity": "2019.1",
   "unityRelease": "0b5",
   "documentationUrl": "http://docs.itibsoft.ru/books/modules/page/panel-manager",
-  "changelogUrl": "http://docs.itibsoft.ru/link/45#bkmrk-v0.0.1-%28changelog%29-%D0%9F",
   "author": {
     "name": "Itibsoft",
     "email": "itibsoft@gmail.com",
