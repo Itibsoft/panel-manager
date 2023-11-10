@@ -23,7 +23,8 @@ namespace Itibsoft.PanelManager.External
                 .FromIFactory(factory => factory
                     .To<PanelManager.Factory>()
                     .FromSubContainerResolve()
-                    .ByMethod(InstallPanelManagerFactory))
+                    .ByMethod(InstallPanelManagerFactory)
+                    .AsSingle())
                 .AsSingle()
                 .NonLazy();
         }
