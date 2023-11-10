@@ -8,7 +8,7 @@
         protected PanelControllerBase(TPanel panel)
         {
             Panel = panel;
-
+            
             _callbackDispatcher = new CallbackDispatcher();
         }
         

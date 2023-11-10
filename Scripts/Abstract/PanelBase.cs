@@ -5,7 +5,8 @@ namespace Itibsoft.PanelManager
 {
 	public abstract class PanelBase : MonoBehaviour, IPanel
 	{
-		public PanelType Type { get; [UsedImplicitly] protected set; }
+		public PanelAttribute Meta { get; [UsedImplicitly] protected set; }
+		public RectTransform RectTransform => _rectTransform;
 
 		private RectTransform _rectTransform;
 

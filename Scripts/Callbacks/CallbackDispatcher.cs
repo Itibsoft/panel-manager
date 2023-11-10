@@ -5,13 +5,8 @@ namespace Itibsoft.PanelManager
 {
     public class CallbackDispatcher
     {
-        private readonly Dictionary<Type, List<Delegate>> _callbacks;
+        private readonly Dictionary<Type, List<Delegate>> _callbacks = new();
 
-        public CallbackDispatcher()
-        {
-            _callbacks = new Dictionary<Type, List<Delegate>>();
-        }
-        
         public void RegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback) where TCallback : IPanelCallback
         {
             if (_callbacks.TryGetValue(typeof(TCallback), out var value))
