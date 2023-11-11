@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Itibsoft.PanelManager.Reflections
+namespace Itibsoft.PanelManager
 {
     public static class PanelReflector
     {
