@@ -2,8 +2,9 @@
 {
     public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel> where TPanel : IPanel
     {
-        private readonly CallbackDispatcher _callbackDispatcher;
         public TPanel Panel { get; }
+        
+        private readonly CallbackDispatcher _callbackDispatcher;
         
         protected PanelControllerBase(TPanel panel)
         {
@@ -14,12 +15,16 @@
         
         public void Open()
         {
+            OnOpenPanel();
+            
             var openCallback = new OpenPanelCallback(Panel);
             _callbackDispatcher.InvokeCallback(openCallback);
         }
 
         public void Close()
         {
+            OnClosePanel();
+            
             var closeCallback = new ClosePanelCallback(Panel);
             _callbackDispatcher.InvokeCallback(closeCallback);
         }
@@ -46,6 +51,16 @@
         }
 
         public virtual void Dispose()
+        {
+            
+        }
+
+        protected virtual void OnOpenPanel()
+        {
+            
+        }
+        
+        protected virtual void OnClosePanel()
         {
             
         }
