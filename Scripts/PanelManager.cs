@@ -148,19 +148,9 @@ namespace Itibsoft.PanelManager
 
 #if EXTENJECT
         [JetBrains.Annotations.UsedImplicitly]
-        public class Factory : Zenject.IFactory<PanelManager>
+        public class Factory : Zenject.PlaceholderFactory<IPanelManager>
         {
-            private readonly Zenject.DiContainer _diContainer;
-
-            public Factory(Zenject.DiContainer diContainer)
-            {
-                _diContainer = diContainer;
-            }
-
-            public PanelManager Create()
-            {
-                return _diContainer.Instantiate<PanelManager>();
-            }
+            
         }
 #endif
     }
