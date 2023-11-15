@@ -36,14 +36,14 @@ namespace Itibsoft.PanelManager.External
                 var panelDispatcherInstance = PanelDispatcher.Create();
                 panelDispatcherInstance.transform.SetParent(_group);
                 
-                Container.Bind<PanelDispatcher>()
+                container.Bind<PanelDispatcher>()
                     .FromInstance(panelDispatcherInstance)
                     .AsSingle()
                     .Lazy();
             }
             else
             {
-                Container.Bind<PanelDispatcher>()
+                container.Bind<PanelDispatcher>()
                     .FromComponentInNewPrefab(_panelDispatcherPrefab)
                     .UnderTransform(_group)
                     .AsSingle()
