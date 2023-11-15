@@ -148,7 +148,7 @@ namespace Itibsoft.PanelManager
 
 #if EXTENJECT
         [JetBrains.Annotations.UsedImplicitly]
-        public class Factory : Zenject.PlaceholderFactory<IPanelManager>
+        public class Factory : Zenject.PlaceholderFactory<PanelManager>
         {
             
         }
