@@ -56,9 +56,9 @@ namespace Itibsoft.PanelManager
 
         public TPanelController LoadPanel<TPanelController>() where TPanelController : IPanelController
         {
+            var meta = PanelReflector.GetMeta<TPanelController>();
             var type = typeof(TPanelController);
             var hash = type.GetStableHash();
-            var meta = PanelReflector.GetMeta<TPanelController>();
 
             if (_panelsCashed.TryGetValue(hash, out var controller))
             {
@@ -69,7 +69,7 @@ namespace Itibsoft.PanelManager
 
             var panel = controller.GetPanel();
 
-            panel.SetMeta(meta);
+            PanelReflector.SetMeta(panel, meta);
 
             _panelDispatcher.Cache(panel);
 
@@ -148,19 +148,9 @@ namespace Itibsoft.PanelManager
 
 #if EXTENJECT
         [JetBrains.Annotations.UsedImplicitly]
-        public class Factory : Zenject.IFactory<PanelManager>
+        public class Factory : Zenject.PlaceholderFactory<IPanelManager>
         {
-            private readonly Zenject.DiContainer _diContainer;
-
-            public Factory(Zenject.DiContainer diContainer)
-            {
-                _diContainer = diContainer;
-            }
-
-            public PanelManager Create()
-            {
-                return _diContainer.Instantiate<PanelManager>();
-            }
+            
         }
 #endif
     }
