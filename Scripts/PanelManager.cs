@@ -56,9 +56,9 @@ namespace Itibsoft.PanelManager
 
         public TPanelController LoadPanel<TPanelController>() where TPanelController : IPanelController
         {
+            var meta = PanelReflector.GetMeta<TPanelController>();
             var type = typeof(TPanelController);
             var hash = type.GetStableHash();
-            var meta = PanelReflector.GetMeta<TPanelController>();
 
             if (_panelsCashed.TryGetValue(hash, out var controller))
             {
@@ -69,7 +69,7 @@ namespace Itibsoft.PanelManager
 
             var panel = controller.GetPanel();
 
-            panel.SetMeta(meta);
+            PanelReflector.SetMeta(panel, meta);
 
             _panelDispatcher.Cache(panel);
 

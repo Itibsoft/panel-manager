@@ -9,7 +9,7 @@ namespace Itibsoft.PanelManager
         private static readonly Dictionary<IPanel, MethodInfo> _panelConstructorReflectionCached = new();
         private static readonly Dictionary<IPanel, MethodInfo> _panelOpenReflectionCached = new();
         private static readonly Dictionary<IPanel, MethodInfo> _panelCloseReflectionCached = new();
-        
+
         public static PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
@@ -23,61 +23,56 @@ namespace Itibsoft.PanelManager
             return meta;
         }
 
+        public static void SetMeta(IPanel panel, PanelAttribute meta)
+        {
+            var propertyType = panel.GetType().GetProperty("Meta",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+
+            if (propertyType != null)
+            {
+                var setter = propertyType.GetSetMethod(true);
+
+                if (setter != null) setter.Invoke(panel, new object[] { meta });
+                else throw new Exception("No set method found for property 'Meta'");
+            }
+        }
+
         public static void InvokeConstructorMethod(IPanel panel)
         {
-            if (_panelConstructorReflectionCached.TryGetValue(panel, out var method))
-            {
-                method?.Invoke(panel, default);
-                return;
-            }
-            
-            method = GetMethodForName(panel, "Constructor");
-            
-            if (method != default)
-            {
-                method.Invoke(panel, default);
-                _panelConstructorReflectionCached.Add(panel, method);
-            }
+            InvokeMethod(panel, _panelConstructorReflectionCached, "Constructor");
         }
 
         public static void InvokeOnOpenMethod(IPanel panel)
         {
-            if (_panelOpenReflectionCached.TryGetValue(panel, out var method))
-            {
-                method?.Invoke(panel, default);
-                return;
-            }
-            
-            method = GetMethodForName(panel, "OnOpen");
-            
-            if (method != default)
-            {
-                method.Invoke(panel, default);
-                _panelOpenReflectionCached.Add(panel, method);
-            }
+            InvokeMethod(panel, _panelOpenReflectionCached, "OnOpen");
         }
 
         public static void InvokeOnCloseMethod(IPanel panel)
         {
-            if (_panelCloseReflectionCached.TryGetValue(panel, out var method))
-            {
-                method?.Invoke(panel, default);
-                return;
-            }
-            
-            method = GetMethodForName(panel, "OnClose");
-            
-            if (method != default)
-            {
-                method.Invoke(panel, default);
-                _panelCloseReflectionCached.Add(panel, method);
-            }
+            InvokeMethod(panel, _panelCloseReflectionCached, "OnClose");
         }
 
         private static MethodInfo GetMethodForName(object instance, string nameMethod)
         {
             const BindingFlags BINDING_FLAGS = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             return instance.GetType().GetMethod(nameMethod, BINDING_FLAGS);
+        }
+        
+        private static void InvokeMethod(IPanel panel, Dictionary<IPanel, MethodInfo> reflectionCache, string methodName)
+        {
+            if (reflectionCache.TryGetValue(panel, out var method))
+            {
+                method?.Invoke(panel, default);
+                return;
+            }
+
+            method = GetMethodForName(panel, methodName);
+
+            if (method != default)
+            {
+                method.Invoke(panel, default);
+                reflectionCache.Add(panel, method);
+            }
         }
     }
 }
