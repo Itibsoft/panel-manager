@@ -67,7 +67,7 @@ namespace Itibsoft.PanelManager.External
                 .Lazy();
 
             container
-                .Bind<PanelManager.Factory>()
+                .BindFactory<IPanelManager, PanelManager.Factory>()
                 .AsSingle()
                 .Lazy();
         }
