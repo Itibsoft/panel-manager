@@ -36,7 +36,7 @@ namespace Itibsoft.PanelManager
                 else throw new Exception("No set method found for property 'Meta'");
             }
         }
-
+        
         public static void InvokeConstructorMethod(IPanel panel)
         {
             InvokeMethod(panel, _panelConstructorReflectionCached, "Constructor");
@@ -50,6 +50,13 @@ namespace Itibsoft.PanelManager
         public static void InvokeOnCloseMethod(IPanel panel)
         {
             InvokeMethod(panel, _panelCloseReflectionCached, "OnClose");
+        }
+        
+        public static void ClearCached(IPanel panel)
+        {
+            _panelConstructorReflectionCached.Remove(panel);
+            _panelOpenReflectionCached.Remove(panel);
+            _panelCloseReflectionCached.Remove(panel);
         }
 
         private static MethodInfo GetMethodForName(object instance, string nameMethod)

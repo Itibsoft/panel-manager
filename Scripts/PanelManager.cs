@@ -92,6 +92,8 @@ namespace Itibsoft.PanelManager
             var type = controller.GetType();
             var hash = type.GetStableHash();
 
+            PanelReflector.ClearCached(panel);
+            
             panel.Dispose();
             panel.SetActive(false);
 
