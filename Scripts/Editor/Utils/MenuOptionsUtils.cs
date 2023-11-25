@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 namespace Itibsoft.PanelManager.Editor
 {
-    public static class MenuOptionsUtils
+    internal static class MenuOptionsUtils
     {
         private const string K_UI_LAYER_NAME = "UI";
 
-        public static Canvas CreateCanvas()
+        internal static Canvas CreateCanvas()
         {
             var root = ObjectFactory.CreateGameObject
             (
