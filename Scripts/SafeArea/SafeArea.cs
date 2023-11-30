@@ -23,12 +23,13 @@ namespace Itibsoft.PanelManager
 
         private void Update()
         {
-            Refresh();
+            var safeArea = Screen.safeArea;
+            ApplySafeArea(Rect rect);
         }
 
         private void Refresh()
         {
-            var safeArea = Screen.safeArea;
+           
 
             if (Screen.width != _lastScreenSize.x
                 || Screen.height != _lastScreenSize.y
