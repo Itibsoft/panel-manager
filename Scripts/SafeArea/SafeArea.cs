@@ -5,7 +5,6 @@ namespace Itibsoft.PanelManager
     public class SafeArea : MonoBehaviour
     {
         private RectTransform _rectTransform;
-        private Rect _lastSafeArea = new(0, 0, 0, 0);
         private Vector2Int _lastScreenSize = new(0, 0);
         private ScreenOrientation _lastOrientation = ScreenOrientation.AutoRotation;
 
@@ -31,8 +30,7 @@ namespace Itibsoft.PanelManager
         {
             var safeArea = Screen.safeArea;
 
-            if (safeArea != _lastSafeArea
-                || Screen.width != _lastScreenSize.x
+            if (Screen.width != _lastScreenSize.x
                 || Screen.height != _lastScreenSize.y
                 || Screen.orientation != _lastOrientation)
             {
@@ -48,8 +46,6 @@ namespace Itibsoft.PanelManager
 
         private void ApplySafeArea(Rect rect)
         {
-            _lastSafeArea = rect;
-
             // Check for invalid screen startup state on some Samsung devices (see below)
             if (Screen.width > 0 && Screen.height > 0)
             {
