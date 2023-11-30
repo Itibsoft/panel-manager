@@ -27,24 +27,6 @@ namespace Itibsoft.PanelManager
             ApplySafeArea(Rect rect);
         }
 
-        private void Refresh()
-        {
-           
-
-            if (Screen.width != _lastScreenSize.x
-                || Screen.height != _lastScreenSize.y
-                || Screen.orientation != _lastOrientation)
-            {
-                // Fix for having auto-rotate off and manually forcing a screen orientation.
-                // See https://forum.unity.com/threads/569236/#post-4473253 and https://forum.unity.com/threads/569236/page-2#post-5166467
-                _lastScreenSize.x = Screen.width;
-                _lastScreenSize.y = Screen.height;
-                _lastOrientation = Screen.orientation;
-
-                ApplySafeArea(safeArea);
-            }
-        }
-
         private void ApplySafeArea(Rect rect)
         {
             // Check for invalid screen startup state on some Samsung devices (see below)
