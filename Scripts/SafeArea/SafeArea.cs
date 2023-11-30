@@ -17,14 +17,12 @@ namespace Itibsoft.PanelManager
                 Debug.LogError("Cannot apply safe area - no RectTransform found on " + name);
                 Destroy(gameObject);
             }
-
-            Refresh();
         }
 
         private void Update()
         {
             var safeArea = Screen.safeArea;
-            ApplySafeArea(Rect rect);
+            ApplySafeArea(safeArea);
         }
 
         private void ApplySafeArea(Rect rect)
