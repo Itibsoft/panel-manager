@@ -4,13 +4,13 @@ using System.Reflection;
 
 namespace Itibsoft.PanelManager
 {
-    public static class PanelReflector
+    internal static class PanelReflector
     {
         private static readonly Dictionary<IPanel, MethodInfo> _panelConstructorReflectionCached = new();
         private static readonly Dictionary<IPanel, MethodInfo> _panelOpenReflectionCached = new();
         private static readonly Dictionary<IPanel, MethodInfo> _panelCloseReflectionCached = new();
 
-        public static PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
+        internal static PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
             var meta = type.GetCustomAttribute<PanelAttribute>();
@@ -23,7 +23,7 @@ namespace Itibsoft.PanelManager
             return meta;
         }
 
-        public static void SetMeta(IPanel panel, PanelAttribute meta)
+        internal static void SetMeta(IPanel panel, PanelAttribute meta)
         {
             var propertyType = panel.GetType().GetProperty("Meta",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -37,22 +37,22 @@ namespace Itibsoft.PanelManager
             }
         }
         
-        public static void InvokeConstructorMethod(IPanel panel)
+        internal static void InvokeConstructorMethod(IPanel panel)
         {
             InvokeMethod(panel, _panelConstructorReflectionCached, "Constructor");
         }
 
-        public static void InvokeOnOpenMethod(IPanel panel)
+        internal static void InvokeOnOpenMethod(IPanel panel)
         {
             InvokeMethod(panel, _panelOpenReflectionCached, "OnOpen");
         }
 
-        public static void InvokeOnCloseMethod(IPanel panel)
+        internal static void InvokeOnCloseMethod(IPanel panel)
         {
             InvokeMethod(panel, _panelCloseReflectionCached, "OnClose");
         }
         
-        public static void ClearCached(IPanel panel)
+        internal static void ClearCached(IPanel panel)
         {
             _panelConstructorReflectionCached.Remove(panel);
             _panelOpenReflectionCached.Remove(panel);

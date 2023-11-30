@@ -3,14 +3,15 @@ using System.Collections.Generic;
 
 namespace Itibsoft.PanelManager
 {
-    public class CallbackDispatcher
+    internal sealed class CallbackDispatcher
     {
         private readonly Dictionary<Type, List<Delegate>> _callbacks = new();
 
-        public void RegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback) where TCallback : IPanelCallback
+        internal void RegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback)
+            where TCallback : IPanelCallback
         {
             if (_callbacks.TryGetValue(typeof(TCallback), out var value))
-            { 
+            {
                 value.Add(callback);
                 return;
             }
@@ -18,7 +19,8 @@ namespace Itibsoft.PanelManager
             _callbacks.Add(typeof(TCallback), new List<Delegate> { callback });
         }
 
-        public void UnRegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback) where TCallback : IPanelCallback
+        internal void UnRegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback)
+            where TCallback : IPanelCallback
         {
             if (_callbacks.TryGetValue(typeof(TCallback), out var value))
             {
@@ -26,7 +28,7 @@ namespace Itibsoft.PanelManager
             }
         }
 
-        public void InvokeCallback<TCallback>(TCallback callbackValue) where TCallback : IPanelCallback
+        internal void InvokeCallback<TCallback>(TCallback callbackValue) where TCallback : IPanelCallback
         {
             if (_callbacks.TryGetValue(typeof(TCallback), out var value))
             {
