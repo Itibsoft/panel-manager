@@ -1,6 +1,6 @@
 {
   "name": "com.itibsoft.panelmanager",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "displayName": "Panel Manager",
   "description": "This system is designed to work with User Interfaces (UI). It allows you to create interfaces without thinking about how to call this or that window, as everything is handled by the manager.",
   "unity": "2019.1",

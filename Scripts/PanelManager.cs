@@ -94,6 +94,8 @@ namespace Itibsoft.PanelManager
 
             PanelReflector.ClearCached(panel);
             
+            _panelDispatcher.Release(panel);
+            
             panel.Dispose();
             panel.SetActive(false);
 
