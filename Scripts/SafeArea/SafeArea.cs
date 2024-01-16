@@ -5,7 +5,6 @@ namespace Itibsoft.PanelManager
     public class SafeArea : MonoBehaviour
     {
         private RectTransform _rectTransform;
-        private Rect _lastSafeArea = new(0, 0, 0, 0);
         private Vector2Int _lastScreenSize = new(0, 0);
         private ScreenOrientation _lastOrientation = ScreenOrientation.AutoRotation;
 
@@ -18,38 +17,16 @@ namespace Itibsoft.PanelManager
                 Debug.LogError("Cannot apply safe area - no RectTransform found on " + name);
                 Destroy(gameObject);
             }
-
-            Refresh();
         }
 
         private void Update()
         {
-            Refresh();
-        }
-
-        private void Refresh()
-        {
             var safeArea = Screen.safeArea;
-
-            if (safeArea != _lastSafeArea
-                || Screen.width != _lastScreenSize.x
-                || Screen.height != _lastScreenSize.y
-                || Screen.orientation != _lastOrientation)
-            {
-                // Fix for having auto-rotate off and manually forcing a screen orientation.
-                // See https://forum.unity.com/threads/569236/#post-4473253 and https://forum.unity.com/threads/569236/page-2#post-5166467
-                _lastScreenSize.x = Screen.width;
-                _lastScreenSize.y = Screen.height;
-                _lastOrientation = Screen.orientation;
-
-                ApplySafeArea(safeArea);
-            }
+            ApplySafeArea(safeArea);
         }
 
         private void ApplySafeArea(Rect rect)
         {
-            _lastSafeArea = rect;
-
             // Check for invalid screen startup state on some Samsung devices (see below)
             if (Screen.width > 0 && Screen.height > 0)
             {

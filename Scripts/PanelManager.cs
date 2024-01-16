@@ -84,33 +84,6 @@ namespace Itibsoft.PanelManager
             return (TPanelController)controller;
         }
 
-        private void OnReleasePanelHandle(ReleasePanelCallback callback)
-        {
-            var controller = callback.PanelController;
-            var panel = controller.GetPanel();
-
-            var type = controller.GetType();
-            var hash = type.GetStableHash();
-
-            PanelReflector.ClearCached(panel);
-            
-            panel.Dispose();
-            panel.SetActive(false);
-
-            controller.Dispose();
-
-            var panelGameObject = panel.GetGameObject();
-
-#if ADDRESSABLES
-            UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);
-#else
-            UnityEngine.Object.DestroyImmediate(panelGameObject);
-            UnityEngine.Resources.UnloadUnusedAssets();
-#endif
-
-            _panelsCashed.Remove(hash);
-        }
-
         #endregion
 
         #region Private API (Methods)
@@ -144,6 +117,35 @@ namespace Itibsoft.PanelManager
             _panelDispatcher.Cache(panel);
         }
 
+        private void OnReleasePanelHandle(ReleasePanelCallback callback)
+        {
+            var controller = callback.PanelController;
+            var panel = controller.GetPanel();
+
+            var type = controller.GetType();
+            var hash = type.GetStableHash();
+
+            PanelReflector.ClearCached(panel);
+
+            _panelDispatcher.Release(panel);
+
+            panel.Dispose();
+            panel.SetActive(false);
+
+            controller.Dispose();
+
+            var panelGameObject = panel.GetGameObject();
+
+#if ADDRESSABLES
+            UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);
+#else
+            UnityEngine.Object.DestroyImmediate(panelGameObject);
+            UnityEngine.Resources.UnloadUnusedAssets();
+#endif
+
+            _panelsCashed.Remove(hash);
+        }
+
         #endregion
 
         #endregion
@@ -152,7 +154,6 @@ namespace Itibsoft.PanelManager
         [JetBrains.Annotations.UsedImplicitly]
         public class Factory : Zenject.PlaceholderFactory<PanelManager>
         {
-            
         }
 #endif
     }

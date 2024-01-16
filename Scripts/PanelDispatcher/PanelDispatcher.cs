@@ -84,6 +84,8 @@ namespace Itibsoft.PanelManager
         public void SetOverlay(IPanel panel) => PanelForContent(panel, true);
         public void Cache(IPanel panel) => PanelForContent(panel, false);
 
+        public void Release(IPanel panel) => _contentsForPanels[panel.Meta.PanelType].Remove(panel);
+
         private void PanelForContent(IPanel panel, bool isOpen)
         {
             RectTransform content;
