@@ -15,11 +15,18 @@ namespace Itibsoft.PanelManager
         {
             var type = typeof(TPanelController);
             
-            var panel = PanelFactory.Create(meta);
-
-            var controller = CreateInstance(type, panel);
+            var controller = Create(type, meta);
 
             return (TPanelController)controller;
+        }
+
+        public IPanelController Create(Type typePanelController, PanelAttribute meta)
+        {
+            var panel = PanelFactory.Create(meta);
+
+            var controller = CreateInstance(typePanelController, panel);
+
+            return (IPanelController)controller;
         }
 
         public virtual object CreateInstance(Type type, params object[] arguments)

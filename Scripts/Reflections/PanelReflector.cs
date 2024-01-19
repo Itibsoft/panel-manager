@@ -13,11 +13,17 @@ namespace Itibsoft.PanelManager
         internal static PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
-            var meta = type.GetCustomAttribute<PanelAttribute>();
+
+            return GetMeta(type);
+        }
+
+        internal static PanelAttribute GetMeta(Type panelControllerType)
+        {
+            var meta = panelControllerType.GetCustomAttribute<PanelAttribute>();
 
             if (meta == default)
             {
-                throw new Exception($"Not found Attribute.Panel for controller: {type.Name}");
+                throw new Exception($"Not found Attribute.Panel for controller: {panelControllerType.Name}");
             }
 
             return meta;
