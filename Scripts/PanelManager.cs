@@ -99,11 +99,13 @@ namespace Itibsoft.PanelManager
 
             var panel = controller.GetPanel();
 
+            PanelReflector.SetPanelManager(controller, this);
             PanelReflector.SetMeta(panel, meta);
 
             _panelDispatcher.Cache(panel);
 
             PanelReflector.InvokeConstructorMethod(panel);
+            PanelReflector.InvokeOnLoadMethod(controller);
 
             controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
             controller.RegisterCallback<ClosePanelCallback>(OnHandleClosePanel);

@@ -1,8 +1,13 @@
-﻿namespace Itibsoft.PanelManager
+﻿using System;
+using JetBrains.Annotations;
+
+namespace Itibsoft.PanelManager
 {
     public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel> where TPanel : IPanel
     {
         public TPanel Panel { get; }
+        
+        protected IPanelManager PanelManager { get; [UsedImplicitly] set; }
         
         private readonly CallbackDispatcher _callbackDispatcher;
         
@@ -15,17 +20,19 @@
         
         public void Open()
         {
-            OnOpenPanel();
-            
             var openCallback = new OpenPanelCallback(Panel);
             _callbackDispatcher.InvokeCallback(openCallback);
         }
 
         public void Close()
         {
-            OnClosePanel();
-            
             var closeCallback = new ClosePanelCallback(Panel);
+            _callbackDispatcher.InvokeCallback(closeCallback);
+        }
+        
+        public void Release()
+        {
+            var closeCallback = new ReleasePanelCallback(this);
             _callbackDispatcher.InvokeCallback(closeCallback);
         }
 
@@ -44,25 +51,29 @@
             _callbackDispatcher.UnRegisterCallback(callback);
         }
 
-        public void Release()
-        {
-            var closeCallback = new ReleasePanelCallback(this);
-            _callbackDispatcher.InvokeCallback(closeCallback);
-        }
-
-        public virtual void Dispose()
-        {
-            
-        }
-
-        protected virtual void OnOpenPanel()
+        protected virtual void OnLoad()
         {
             
         }
         
-        protected virtual void OnClosePanel()
+        protected virtual void OnOpen()
         {
             
+        }
+        
+        protected virtual void OnClose()
+        {
+            
+        }
+
+        protected virtual void OnUnload()
+        {
+            
+        }
+        
+        void IDisposable.Dispose()
+        {
+            OnUnload();
         }
     }
 }
