@@ -5,6 +5,7 @@ namespace Itibsoft.PanelManager
 {
 	public abstract class PanelBase : MonoBehaviour, IPanel
 	{
+		public PanelState State { get; private set; } = PanelState.CLOSED;
 		public PanelAttribute Meta { get; [UsedImplicitly] protected set; }
 		public RectTransform RectTransform => _rectTransform;
 
@@ -18,6 +19,8 @@ namespace Itibsoft.PanelManager
 		public void SetActive(bool isActive)
 		{
 			gameObject.SetActive(isActive);
+
+			State = isActive ? PanelState.OPENED : PanelState.CLOSED;
 		}
 
 		public void SetParent(Transform parent)
