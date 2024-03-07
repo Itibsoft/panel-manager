@@ -1,8 +1,8 @@
 {
   "name": "com.itibsoft.panelmanager",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "displayName": "Panel Manager",
-  "description": "This system is designed to work with User Interfaces (UI). It allows you to create interfaces without thinking about how to call this or that window, as everything is handled by the manager.",
+  "description": "Features:\n1. Panel state OPENED/CLOSED\n2. Controller.OnLoad/OnUnload implement\n3. Update API for Manager\n4. Minor optimizations for reflections",
   "unity": "2019.1",
   "unityRelease": "0b5",
   "documentationUrl": "http://docs.itibsoft.ru/books/modules/page/panel-manager",
@@ -15,7 +15,7 @@
     {
       "displayName": "Demo",
       "description": "Panel manager demo version",
-      "path": "Example~"
+      "path": "Samples~/Demo"
     }
   ]
 }
