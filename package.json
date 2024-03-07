@@ -1,9 +1,9 @@
 {
   "name": "com.itibsoft.panelmanager",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "displayName": "Panel Manager",
-  "description": "Features:\n1. Panel state OPENED/CLOSED\n2. Controller.OnLoad/OnUnload implement\n3. Update API for Manager\n4. Minor optimizations for reflections",
-  "unity": "2019.1",
+  "description": "Features:\n1. Panel state OPENED/CLOSED\n2. Controller.OnLoad/OnUnload implement\n3. Update API for Manager\n4. Minor optimizations for reflections\n5. Reflex implementation",
+  "unity": "2021.3",
   "unityRelease": "0b5",
   "documentationUrl": "http://docs.itibsoft.ru/books/modules/page/panel-manager",
   "author": {
@@ -16,6 +16,11 @@
       "displayName": "Demo",
       "description": "Panel manager demo version",
       "path": "Samples~/Demo"
+    },
+    {
+      "displayName": "Reflex DI",
+      "description": "Reflex demo implementation",
+      "path": "Samples~/Reflex"
     }
   ]
 }
