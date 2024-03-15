@@ -56,24 +56,56 @@ namespace Itibsoft.PanelManager
 
         public TPanelController LoadPanel<TPanelController>() where TPanelController : IPanelController
         {
-            var meta = PanelReflector.GetMeta<TPanelController>();
             var type = typeof(TPanelController);
-            var hash = type.GetStableHash();
+            
+            var controller = LoadPanelInternal(type);
+            
+            return (TPanelController)controller;
+        }
+        
+        public void ClosePanels(params Type[] typeControllers)
+        {
+            for (int index = 0, count = typeControllers.Length; index < count; index++)
+            {
+                var typeController = typeControllers[index];
+
+                var controller = LoadPanelInternal(typeController);
+                controller.Close();
+            }
+        }
+
+        public void OpenPanels(params Type[] typeControllers)
+        {
+            for (int index = 0, count = typeControllers.Length; index < count; index++)
+            {
+                var typeController = typeControllers[index];
+
+                var controller = LoadPanelInternal(typeController);
+                controller.Open();
+            }
+        }
+
+        private IPanelController LoadPanelInternal(Type typePanelController)
+        {
+            var meta = PanelReflector.GetMeta(typePanelController);
+            var hash = typePanelController.GetStableHash();
 
             if (_panelsCashed.TryGetValue(hash, out var controller))
             {
-                return (TPanelController)controller;
+                return controller;
             }
 
-            controller = _panelControllerFactory.Create<TPanelController>(meta);
+            controller = _panelControllerFactory.Create(typePanelController, meta);
 
             var panel = controller.GetPanel();
 
+            PanelReflector.SetPanelManager(controller, this);
             PanelReflector.SetMeta(panel, meta);
 
             _panelDispatcher.Cache(panel);
 
             PanelReflector.InvokeConstructorMethod(panel);
+            PanelReflector.InvokeOnLoadMethod(controller);
 
             controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
             controller.RegisterCallback<ClosePanelCallback>(OnHandleClosePanel);
@@ -81,9 +113,9 @@ namespace Itibsoft.PanelManager
 
             _panelsCashed.Add(hash, controller);
 
-            return (TPanelController)controller;
+            return controller;
         }
-
+        
         #endregion
 
         #region Private API (Methods)

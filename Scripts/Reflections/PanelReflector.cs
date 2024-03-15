@@ -6,18 +6,25 @@ namespace Itibsoft.PanelManager
 {
     internal static class PanelReflector
     {
-        private static readonly Dictionary<IPanel, MethodInfo> _panelConstructorReflectionCached = new();
-        private static readonly Dictionary<IPanel, MethodInfo> _panelOpenReflectionCached = new();
-        private static readonly Dictionary<IPanel, MethodInfo> _panelCloseReflectionCached = new();
+        private static readonly Dictionary<object, MethodInfo> _panelConstructorReflectionCached = new();
+        private static readonly Dictionary<object, MethodInfo> _panelOpenReflectionCached = new();
+        private static readonly Dictionary<object, MethodInfo> _panelCloseReflectionCached = new();
+        private static readonly Dictionary<object, MethodInfo> _controllerLoadReflectionCached = new();
 
         internal static PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
-            var meta = type.GetCustomAttribute<PanelAttribute>();
+
+            return GetMeta(type);
+        }
+
+        internal static PanelAttribute GetMeta(Type panelControllerType)
+        {
+            var meta = panelControllerType.GetCustomAttribute<PanelAttribute>();
 
             if (meta == default)
             {
-                throw new Exception($"Not found Attribute.Panel for controller: {type.Name}");
+                throw new Exception($"Not found Attribute.Panel for controller: {panelControllerType.Name}");
             }
 
             return meta;
@@ -36,20 +43,39 @@ namespace Itibsoft.PanelManager
                 else throw new Exception("No set method found for property 'Meta'");
             }
         }
+
+        internal static void SetPanelManager(IPanelController controller, IPanelManager panelManager)
+        {
+            var propertyType = controller.GetType().GetProperty("PanelManager",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            
+            if (propertyType != null)
+            {
+                var setter = propertyType.GetSetMethod(true);
+
+                if (setter != null) setter.Invoke(controller, new object[] { panelManager });
+                else throw new Exception("No set method found for property 'PanelManager'");
+            }
+        }
         
         internal static void InvokeConstructorMethod(IPanel panel)
         {
             InvokeMethod(panel, _panelConstructorReflectionCached, "Constructor");
         }
 
-        internal static void InvokeOnOpenMethod(IPanel panel)
+        internal static void InvokeOnOpenMethod(object instance)
         {
-            InvokeMethod(panel, _panelOpenReflectionCached, "OnOpen");
+            InvokeMethod(instance, _panelOpenReflectionCached, "OnOpen");
         }
 
-        internal static void InvokeOnCloseMethod(IPanel panel)
+        internal static void InvokeOnCloseMethod(object instance)
         {
-            InvokeMethod(panel, _panelCloseReflectionCached, "OnClose");
+            InvokeMethod(instance, _panelCloseReflectionCached, "OnClose");
+        }
+        
+        internal static void InvokeOnLoadMethod(object instance)
+        {
+            InvokeMethod(instance, _controllerLoadReflectionCached, "OnLoad");
         }
         
         internal static void ClearCached(IPanel panel)
@@ -65,7 +91,7 @@ namespace Itibsoft.PanelManager
             return instance.GetType().GetMethod(nameMethod, BINDING_FLAGS);
         }
         
-        private static void InvokeMethod(IPanel panel, Dictionary<IPanel, MethodInfo> reflectionCache, string methodName)
+        private static void InvokeMethod(object panel, IDictionary<object, MethodInfo> reflectionCache, string methodName)
         {
             if (reflectionCache.TryGetValue(panel, out var method))
             {
@@ -75,11 +101,13 @@ namespace Itibsoft.PanelManager
 
             method = GetMethodForName(panel, methodName);
 
-            if (method != default)
+            if (method == default)
             {
-                method.Invoke(panel, default);
-                reflectionCache.Add(panel, method);
+                return;
             }
+            
+            method.Invoke(panel, default);
+            reflectionCache.Add(panel, method);
         }
     }
 }
