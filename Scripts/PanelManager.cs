@@ -10,10 +10,15 @@ namespace Itibsoft.PanelManager
     {
         #region Fields
 
+        #region Public Fields
+
+        public PanelDispatcher PanelDispatcher { get; }
+
+        #endregion
+        
         #region Private Fields
 
         private readonly IPanelControllerFactory _panelControllerFactory;
-        private readonly PanelDispatcher _panelDispatcher;
 
         private readonly Dictionary<ushort, IPanelController> _panelsCashed = new();
 
@@ -27,13 +32,13 @@ namespace Itibsoft.PanelManager
         public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
         {
             _panelControllerFactory = panelControllerFactory;
-            _panelDispatcher = panelDispatcher;
+            PanelDispatcher = panelDispatcher;
         }
 #else
         public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
         {
             _panelControllerFactory = panelControllerFactory;
-            _panelDispatcher = panelDispatcher;
+            PanelDispatcher = panelDispatcher;
 
             if (_panelControllerFactory == default)
             {
@@ -46,7 +51,7 @@ namespace Itibsoft.PanelManager
                 _panelControllerFactory = new PanelControllerFactory(panelFactory);
             }
 
-            _panelDispatcher ??= PanelDispatcher.Create();
+            PanelDispatcher ??= PanelDispatcher.Create();
         }
 #endif
 
@@ -102,7 +107,7 @@ namespace Itibsoft.PanelManager
             PanelReflector.SetPanelManager(controller, this);
             PanelReflector.SetMeta(panel, meta);
 
-            _panelDispatcher.Cache(panel);
+            PanelDispatcher.Cache(panel);
 
             PanelReflector.InvokeConstructorMethod(panel);
             PanelReflector.InvokeOnLoadMethod(controller);
@@ -129,10 +134,10 @@ namespace Itibsoft.PanelManager
             switch (panel.Meta.PanelType)
             {
                 case PanelType.Window:
-                    _panelDispatcher.SetWindow(panel);
+                    PanelDispatcher.SetWindow(panel);
                     break;
                 case PanelType.Overlay:
-                    _panelDispatcher.SetOverlay(panel);
+                    PanelDispatcher.SetOverlay(panel);
                     break;
                 default: throw new ArgumentOutOfRangeException();
             }
@@ -146,7 +151,7 @@ namespace Itibsoft.PanelManager
 
             PanelReflector.InvokeOnCloseMethod(panel);
 
-            _panelDispatcher.Cache(panel);
+            PanelDispatcher.Cache(panel);
         }
 
         private void OnReleasePanelHandle(ReleasePanelCallback callback)
@@ -159,7 +164,7 @@ namespace Itibsoft.PanelManager
 
             PanelReflector.ClearCached(panel);
 
-            _panelDispatcher.Release(panel);
+            PanelDispatcher.Release(panel);
 
             panel.Dispose();
             panel.SetActive(false);
