@@ -8,6 +8,10 @@ namespace Itibsoft.PanelManager
 {
     public class PanelDispatcher : MonoBehaviour
     {
+        public Canvas Canvas { get; private set; }
+        public CanvasScaler CanvasScaler { get; private set; }
+        public GraphicRaycaster GraphicRaycaster { get; private set; }
+        
         [SerializeField] private RectTransform _windowContent;
         [SerializeField] private RectTransform _overlayContent;
         [SerializeField] private RectTransform _cashedContent;
@@ -38,6 +42,10 @@ namespace Itibsoft.PanelManager
             var canvasScaler = instance.GetComponent<CanvasScaler>();
             var graphicRaycaster = instance.GetComponent<GraphicRaycaster>();
             var dispatcher = instance.GetComponent<PanelDispatcher>();
+
+            dispatcher.Canvas = canvas;
+            dispatcher.CanvasScaler = canvasScaler;
+            dispatcher.GraphicRaycaster = graphicRaycaster;
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.pixelPerfect = false;
