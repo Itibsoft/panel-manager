@@ -26,20 +26,16 @@ namespace Itibsoft.PanelManager
 
         #endregion;
 
-        #region Constructors
+        #region Initialize
 
+        public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
+        {
 #if EXTENJECT
-        public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
-        {
             _panelControllerFactory = panelControllerFactory;
             PanelDispatcher = panelDispatcher;
-        }
 #else
-        public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
-        {
             _panelControllerFactory = panelControllerFactory;
-            PanelDispatcher = panelDispatcher;
-
+            
             if (_panelControllerFactory == default)
             {
 #if ADDRESSABLES
@@ -51,9 +47,15 @@ namespace Itibsoft.PanelManager
                 _panelControllerFactory = new PanelControllerFactory(panelFactory);
             }
 
-            PanelDispatcher ??= PanelDispatcher.Create();
-        }
+            if (panelDispatcher == default)
+            {
+                panelDispatcher = PanelDispatcherBuilder.Create().Build();
+            }
+
+            PanelDispatcher = panelDispatcher;
 #endif
+        }
+
 
         #endregion
 
