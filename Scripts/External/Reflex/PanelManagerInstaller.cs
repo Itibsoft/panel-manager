@@ -1,22 +1,19 @@
 ﻿#if REFLEX
 
 using Reflex.Core;
-using UnityEngine;
 
 namespace Itibsoft.PanelManager.External
 {
-    public class PanelManagerInstaller : MonoBehaviour, IInstaller
+    public static class PanelManagerInstaller
     {
-        [SerializeField] private PanelDispatcher _panelDispatcher;
-        
-        public void InstallBindings(ContainerBuilder containerBuilder)
+        public static void Install(ContainerBuilder containerBuilder, PanelDispatcher panelDispatcher = default)
         {
             var panelFactory = new ResourcesPanelFactory();
             var panelControllerFactory = new ReflexPanelControllerFactory(panelFactory);
             
             var panelManager = PanelManagerBuilder
                 .Create()
-                .SetPanelDispatcher(_panelDispatcher)
+                .SetPanelDispatcher(panelDispatcher)
                 .SetPanelControllerFactory(panelControllerFactory)
                 .Build();
             

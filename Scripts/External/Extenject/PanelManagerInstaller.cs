@@ -33,7 +33,7 @@ namespace Itibsoft.PanelManager.External
         {
             if (_panelDispatcherPrefab == default)
             {
-                var panelDispatcherInstance = PanelDispatcher.Create();
+                var panelDispatcherInstance = PanelDispatcherBuilder.Create().Build();
                 panelDispatcherInstance.transform.SetParent(_group);
                 
                 container.Bind<PanelDispatcher>()

@@ -1,100 +1,65 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Itibsoft.PanelManager
 {
     public class PanelDispatcher : MonoBehaviour
     {
+        #region Fields
+
+        #region Public Fields
+
         public Canvas Canvas { get; private set; }
         public CanvasScaler CanvasScaler { get; private set; }
         public GraphicRaycaster GraphicRaycaster { get; private set; }
-        
+
+        #endregion
+
+        #region Serialize Fields
+
         [SerializeField] private RectTransform _windowContent;
         [SerializeField] private RectTransform _overlayContent;
         [SerializeField] private RectTransform _cashedContent;
 
+        #endregion
+
+        #region Private Fields
+
         private readonly Dictionary<PanelType, List<IPanel>> _contentsForPanels = new();
 
-        public static PanelDispatcher Create()
+        #endregion
+
+        #endregion
+
+        #region Unity API
+
+        private void Awake()
         {
-            var components = new[]
-            {
-                typeof(PanelDispatcher),
-                typeof(Canvas),
-                typeof(CanvasScaler),
-                typeof(GraphicRaycaster)
-            };
+            Canvas = GetComponent<Canvas>();
+            CanvasScaler = GetComponent<CanvasScaler>();
+            GraphicRaycaster = GetComponent<GraphicRaycaster>();
 
-            var instance = new GameObject("[PanelDispatcher]", components)
-            {
-                transform =
-                {
-                    position = Vector3.zero,
-                    rotation = Quaternion.identity,
-                    localScale = Vector3.zero
-                }
-            };
-
-            var canvas = instance.GetComponent<Canvas>();
-            var canvasScaler = instance.GetComponent<CanvasScaler>();
-            var graphicRaycaster = instance.GetComponent<GraphicRaycaster>();
-            var dispatcher = instance.GetComponent<PanelDispatcher>();
-
-            dispatcher.Canvas = canvas;
-            dispatcher.CanvasScaler = canvasScaler;
-            dispatcher.GraphicRaycaster = graphicRaycaster;
-
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.pixelPerfect = false;
-
-            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            canvasScaler.referenceResolution = new Vector2(1920, 1080);
-            canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
-            canvasScaler.matchWidthOrHeight = 0.5f;
-            canvasScaler.referencePixelsPerUnit = 100;
-
-            graphicRaycaster.ignoreReversedGraphics = true;
-            graphicRaycaster.blockingObjects = GraphicRaycaster.BlockingObjects.None;
-
-            CreateGroup("Windows [Content]", out dispatcher._windowContent);
-            CreateGroup("Overlays [Content]", out dispatcher._overlayContent);
-            CreateGroup("Cached [Content]", out dispatcher._cashedContent);
-
-            var eventSystem = new GameObject("EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
-            eventSystem.transform.SetParent(instance.transform);
-
-            DontDestroyOnLoad(instance);
-
-            return instance.GetComponent<PanelDispatcher>();
-
-            void CreateGroup(string name, out RectTransform field)
-            {
-                var group = new GameObject(name, typeof(RectTransform));
-                group.transform.SetParent(instance.transform);
-
-                field = (RectTransform)group.transform;
-
-                var rectTransform = group.GetComponent<RectTransform>();
-
-                rectTransform.anchorMin = Vector2.zero;
-                rectTransform.anchorMax = Vector2.one;
-                rectTransform.offsetMin = Vector2.zero;
-                rectTransform.offsetMax = Vector2.zero;
-
-                rectTransform.localScale = Vector3.one;
-            }
+            _windowContent ??= CreateContent("Windows [Content]");
+            _overlayContent ??= CreateContent("Overlays [Content]");
+            _cashedContent ??= CreateContent("Cached [Content]");
         }
 
-        public void SetWindow(IPanel panel) => PanelForContent(panel, true);
-        public void SetOverlay(IPanel panel) => PanelForContent(panel, true);
-        public void Cache(IPanel panel) => PanelForContent(panel, false);
+        #endregion
 
+        #region Public Methods
+
+        public void SetWindow(IPanel panel) => SetPanelToContent(panel, true);
+        public void SetOverlay(IPanel panel) => SetPanelToContent(panel, true);
+        public void Cache(IPanel panel) => SetPanelToContent(panel, false);
         public void Release(IPanel panel) => _contentsForPanels[panel.Meta.PanelType].Remove(panel);
 
-        private void PanelForContent(IPanel panel, bool isOpen)
+        #endregion
+
+        #region Private Methods
+
+        private void SetPanelToContent(IPanel panel, bool isOpen)
         {
             RectTransform content;
             var orderedPanels = new List<IPanel>();
@@ -133,5 +98,24 @@ namespace Itibsoft.PanelManager
                 panelOrdered.RectTransform.SetSiblingIndex(index);
             }
         }
+
+        private RectTransform CreateContent(string nameContent)
+        {
+            var group = new GameObject(nameContent, typeof(RectTransform));
+            group.transform.SetParent(transform);
+
+            var rectTransform = group.GetComponent<RectTransform>();
+
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.one;
+            rectTransform.offsetMin = Vector2.zero;
+            rectTransform.offsetMax = Vector2.zero;
+
+            rectTransform.localScale = Vector3.one;
+
+            return rectTransform;
+        }
+
+        #endregion
     }
 }

@@ -4,7 +4,6 @@ namespace Itibsoft.PanelManager.Sample.Demo
 {
     public class Main : MonoBehaviour
     {
-#if REFLEX
         [Reflex.Attributes.Inject] private IPanelManager _panelManager;
         
         private void Start()
@@ -13,7 +12,6 @@ namespace Itibsoft.PanelManager.Sample.Demo
             
             window.Open();
         }
-#endif
     }
 }
 
