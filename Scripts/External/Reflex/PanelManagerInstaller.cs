@@ -8,8 +8,12 @@ namespace Itibsoft.PanelManager.External
     {
         public static void Install(ContainerBuilder containerBuilder, PanelDispatcher panelDispatcher = default)
         {
+#if ADDRESSABLES
             var panelFactory = new ResourcesPanelFactory();
-            var panelControllerFactory = new ReflexPanelControllerFactory(panelFactory);
+#else
+            var panelFactory = new AddressablesPanelFactory();
+#endif
+			var panelControllerFactory = new ReflexPanelControllerFactory(panelFactory);
             
             var panelManager = PanelManagerBuilder
                 .Create()
