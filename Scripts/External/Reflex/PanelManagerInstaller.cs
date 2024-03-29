@@ -9,10 +9,11 @@ namespace Itibsoft.PanelManager.External
         public static void Install(ContainerBuilder containerBuilder, PanelDispatcher panelDispatcher = default)
         {
 #if ADDRESSABLES
-            var panelFactory = new ResourcesPanelFactory();
-#else
             var panelFactory = new AddressablesPanelFactory();
+#else
+ 			var panelFactory = new ResourcesPanelFactory();
 #endif
+            
 			var panelControllerFactory = new ReflexPanelControllerFactory(panelFactory);
             
             var panelManager = PanelManagerBuilder
