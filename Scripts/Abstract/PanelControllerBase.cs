@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using JetBrains.Annotations;
 
 namespace Itibsoft.PanelManager
@@ -51,25 +52,17 @@ namespace Itibsoft.PanelManager
             _callbackDispatcher.UnRegisterCallback(callback);
         }
 
-        protected virtual void OnLoad()
-        {
-            
-        }
-        
-        protected virtual void OnOpen()
-        {
-            
-        }
-        
-        protected virtual void OnClose()
-        {
-            
-        }
+        protected virtual void OnLoad() { }
 
-        protected virtual void OnUnload()
-        {
-            
-        }
+        protected virtual IEnumerator OnAfterOpen() { yield return null; }
+        protected virtual IEnumerator OnOpen()  { yield return null; }
+        protected virtual IEnumerator OnBeforeOpen()  { yield return null; }
+        
+        protected virtual IEnumerator OnAfterClose()  { yield return null; }
+        protected virtual IEnumerator OnClose()  { yield return null; }
+        protected virtual IEnumerator OnBeforeClose()  { yield return null; }
+
+        protected virtual void OnUnload() { }
         
         void IDisposable.Dispose()
         {
