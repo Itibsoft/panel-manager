@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace a
+namespace Itibsoft.MVP
 {
     public interface IModel
     {

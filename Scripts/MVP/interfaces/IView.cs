@@ -1,6 +1,6 @@
 ﻿using Itibsoft.PanelManager;
 
-namespace a
+namespace Itibsoft.MVP
 {
     public interface IView
     {

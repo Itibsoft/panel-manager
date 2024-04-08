@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
-using a;
+﻿using System;
+using System.Threading.Tasks;
+using Itibsoft.MVP;
 using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Itibsoft.PanelManager.Tests
 {
-    public abstract class PresenterBase<TModel, TView> : IPresenter 
-        where TModel : IModel 
+    public abstract class PresenterBase<TModel, TView> : IPresenter
+        where TModel : IModel
         where TView : IView
     {
         protected MVPManager Manager { get; [UsedImplicitly] set; }
@@ -17,55 +19,67 @@ namespace Itibsoft.PanelManager.Tests
             Model = model;
             View = view;
         }
-        
+
         public async Task Start()
         {
-            await Model.OnDataFetch_Before();
-            await OnModelLoad_Before();
+            try
+            {
+                await Model.OnDataFetch_Before();
+                await OnModelLoad_Before();
 
-            var data = await Model.FetchData();
-            
-            await Model.OnDataFetched_After(data);
-            await OnModelLoaded_After();
+                var data = await Model.FetchData();
+
+                await Model.OnDataFetched_After(data);
+                await OnModelLoaded_After();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
 
-        public void Open()
+        public virtual void Open()
         {
             OnViewOpen_Before();
-            
-            Manager.RequestOpen(this, status =>
-            {
-                OnViewOpened_After();
-            });
+
+            Manager.RequestOpen(this, status => { OnViewOpened_After(); });
         }
 
-        public void Close()
+        public virtual void Close()
         {
-            Manager.RequestClose(this, status =>
-            {
-                
-            });
+            Manager.RequestClose(this, status => { });
         }
-        
+
         public IView GetView()
         {
             return View;
         }
-        
+
         public IModel GetModel()
         {
             return Model;
         }
 
-        protected virtual void OnViewOpen_Before() { }
-        protected virtual void OnViewOpened_After() { }
+        protected virtual void OnViewOpen_Before()
+        {
+        }
 
-        protected virtual Task OnModelLoad_Before() { return Task.CompletedTask; }
-        protected virtual Task OnModelLoaded_After() { return Task.CompletedTask; }
+        protected virtual void OnViewOpened_After()
+        {
+        }
+
+        protected virtual Task OnModelLoad_Before()
+        {
+            return Task.CompletedTask;
+        }
+
+        protected virtual Task OnModelLoaded_After()
+        {
+            return Task.CompletedTask;
+        }
 
         public void Dispose()
         {
-            
         }
     }
 }

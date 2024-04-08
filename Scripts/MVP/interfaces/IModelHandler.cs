@@ -1,4 +1,4 @@
-﻿namespace a
+﻿namespace Itibsoft.MVP
 {
     public interface IModelHandler
     {
