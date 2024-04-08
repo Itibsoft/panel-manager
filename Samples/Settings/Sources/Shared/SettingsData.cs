@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
-using a;
+using Itibsoft.MVP;
 
-namespace Samples.Tests
+namespace Settings.Shared
 {
     [DataContract]
     public class SettingsData : IData

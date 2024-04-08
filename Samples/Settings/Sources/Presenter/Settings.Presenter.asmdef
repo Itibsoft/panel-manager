@@ -1,0 +1,17 @@
+{
+    "name": "Settings.Presenter",
+    "rootNamespace": "Settings",
+    "references": [
+        "GUID:03036cec3f3f28945a074a9f46db11ba",
+        "GUID:ff593988026b70442ba558c691685085"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

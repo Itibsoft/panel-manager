@@ -1,0 +1,14 @@
+{
+    "name": "Settings.Shared",
+    "rootNamespace": "Settings",
+    "references": ["GUID:03036cec3f3f28945a074a9f46db11ba"],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

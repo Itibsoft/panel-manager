@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using a;
-using Itibsoft.PanelManager.Tests;
+using Itibsoft.MVP;
 using JetBrains.Annotations;
+using Settings.Shared;
 using UnityEngine;
 
-namespace Samples.Tests
+namespace Settings.Model
 {
     [UsedImplicitly]
     public class SettingsModel : ISettingsModel

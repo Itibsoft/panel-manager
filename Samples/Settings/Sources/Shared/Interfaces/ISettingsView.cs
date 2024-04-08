@@ -1,7 +1,7 @@
 ﻿using System;
-using a;
+using Itibsoft.MVP;
 
-namespace Samples.Tests
+namespace Settings.Shared
 {
     public interface ISettingsView : IView
     {

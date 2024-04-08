@@ -1,10 +1,11 @@
 ﻿using System;
 using Itibsoft.PanelManager;
+using Settings.Shared;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Samples.Tests
+namespace Settings.View
 {
     public class SettingsView : PanelBase, ISettingsView
     {
@@ -27,5 +28,6 @@ namespace Samples.Tests
         {
             OnClickPlus?.Invoke();
         }
+        
     }
 }

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
-using Itibsoft.PanelManager.Tests;
+﻿using Itibsoft.PanelManager.Tests;
+using Settings.Model;
+using Settings.Presenter;
 using UnityEngine;
 
 namespace Samples.Tests
