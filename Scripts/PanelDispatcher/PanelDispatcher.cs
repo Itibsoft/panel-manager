@@ -27,7 +27,7 @@ namespace Itibsoft.PanelManager
 
         #region Private Fields
 
-        private readonly Dictionary<PanelType, List<IPanel>> _contentsForPanels = new();
+        private readonly Dictionary<PanelType, List<IViewMono>> _contentsForPanels = new();
 
         #endregion
 
@@ -50,19 +50,19 @@ namespace Itibsoft.PanelManager
 
         #region Public Methods
 
-        public void SetWindow(IPanel panel) => SetPanelToContent(panel, true);
-        public void SetOverlay(IPanel panel) => SetPanelToContent(panel, true);
-        public void Cache(IPanel panel) => SetPanelToContent(panel, false);
-        public void Release(IPanel panel) => _contentsForPanels[panel.Meta.PanelType].Remove(panel);
+        public void SetWindow(IViewMono panel) => SetPanelToContent(panel, true);
+        public void SetOverlay(IViewMono panel) => SetPanelToContent(panel, true);
+        public void Cache(IViewMono panel) => SetPanelToContent(panel, false);
+        public void Release(IViewMono panel) => _contentsForPanels[panel.Meta.PanelType].Remove(panel);
 
         #endregion
 
         #region Private Methods
 
-        private void SetPanelToContent(IPanel panel, bool isOpen)
+        private void SetPanelToContent(IViewMono panel, bool isOpen)
         {
             RectTransform content;
-            var orderedPanels = new List<IPanel>();
+            var orderedPanels = new List<IViewMono>();
 
             if (isOpen)
             {

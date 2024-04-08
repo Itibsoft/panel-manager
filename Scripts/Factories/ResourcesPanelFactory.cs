@@ -6,7 +6,7 @@ namespace Itibsoft.PanelManager
 {
     public class ResourcesPanelFactory : IPanelFactory
     {
-        public IPanel Create(PanelAttribute meta)
+        public IViewMono Create(IPanelMeta meta)
         {
             var panelPrefab = Resources.Load<PanelBase>(meta.AssetId);
 

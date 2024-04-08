@@ -3,10 +3,10 @@ using UnityEngine;
 
 namespace Itibsoft.PanelManager
 {
-	public abstract class PanelBase : MonoBehaviour, IPanel
+	public abstract class PanelBase : MonoBehaviour, IViewMono
 	{
 		public PanelState State { get; private set; } = PanelState.CLOSED;
-		public PanelAttribute Meta { get; [UsedImplicitly] protected set; }
+		public IPanelMeta Meta { get; [UsedImplicitly] protected set; }
 		public RectTransform RectTransform => _rectTransform;
 
 		private RectTransform _rectTransform;
@@ -30,6 +30,11 @@ namespace Itibsoft.PanelManager
 
 		public void SetStretch()
 		{
+			if (_rectTransform == default)
+			{
+				_rectTransform = GetComponent<RectTransform>();
+			}
+			
 			_rectTransform.anchorMin = Vector2.zero;
 			_rectTransform.anchorMax = Vector2.one;
 			_rectTransform.offsetMin = Vector2.zero;

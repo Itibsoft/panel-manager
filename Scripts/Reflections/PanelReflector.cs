@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using a;
+using Itibsoft.PanelManager.Tests;
+using Itibsoft.PanelManager.Tests.Reflections;
 
 namespace Itibsoft.PanelManager
 {
@@ -11,16 +14,19 @@ namespace Itibsoft.PanelManager
         private static readonly Dictionary<object, MethodInfo> _panelCloseReflectionCached = new();
         private static readonly Dictionary<object, MethodInfo> _controllerLoadReflectionCached = new();
 
-        internal static PanelAttribute GetMeta<TPanelController>() where TPanelController : IPanelController
+        internal static IPanelMeta GetMeta<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
 
             return GetMeta(type);
         }
 
-        internal static PanelAttribute GetMeta(Type panelControllerType)
+        internal static IPanelMeta GetMeta(Type panelControllerType)
         {
-            var meta = panelControllerType.GetCustomAttribute<PanelAttribute>();
+            if (panelControllerType.GetCustomAttribute<PanelAttribute>() is not IPanelMeta meta)
+            {
+                meta = panelControllerType.GetCustomAttribute<PresenterMeta>();
+            }
 
             if (meta == default)
             {
@@ -30,7 +36,7 @@ namespace Itibsoft.PanelManager
             return meta;
         }
 
-        internal static void SetMeta(IPanel panel, PanelAttribute meta)
+        internal static void SetMeta(IViewMono panel, IPanelMeta meta)
         {
             var propertyType = panel.GetType().GetProperty("Meta",
                 BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -58,7 +64,21 @@ namespace Itibsoft.PanelManager
             }
         }
         
-        internal static void InvokeConstructorMethod(IPanel panel)
+        internal static void SetPresenter(IPresenter controller, MVPManager manager)
+        {
+            var propertyType = controller.GetType().GetProperty("Manager",
+                BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            
+            if (propertyType != null)
+            {
+                var setter = propertyType.GetSetMethod(true);
+
+                if (setter != null) setter.Invoke(controller, new object[] { manager });
+                else throw new Exception("No set method found for property 'MVPManager'");
+            }
+        }
+        
+        internal static void InvokeConstructorMethod(IViewMono panel)
         {
             InvokeMethod(panel, _panelConstructorReflectionCached, "Constructor");
         }
@@ -78,7 +98,7 @@ namespace Itibsoft.PanelManager
             InvokeMethod(instance, _controllerLoadReflectionCached, "OnLoad");
         }
         
-        internal static void ClearCached(IPanel panel)
+        internal static void ClearCached(IViewMono panel)
         {
             _panelConstructorReflectionCached.Remove(panel);
             _panelOpenReflectionCached.Remove(panel);

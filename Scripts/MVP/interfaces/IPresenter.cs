@@ -1,7 +1,10 @@
-﻿namespace a
+﻿using System.Threading.Tasks;
+using Itibsoft.PanelManager;
+
+namespace a
 {
-    public class IPresenter
+    public interface IPresenter : IViewHandler, IModelHandler
     {
-        
+        public Task Start();
     }
 }

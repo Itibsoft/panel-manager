@@ -20,7 +20,7 @@ namespace Itibsoft.PanelManager
             return (TPanelController)controller;
         }
 
-        public IPanelController Create(Type typePanelController, PanelAttribute meta)
+        public IPanelController Create(Type typePanelController, IPanelMeta meta)
         {
             var panel = PanelFactory.Create(meta);
 

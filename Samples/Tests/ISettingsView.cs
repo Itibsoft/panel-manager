@@ -1,8 +1,9 @@
 ﻿using System;
+using a;
 
-namespace Settings
+namespace Samples.Tests
 {
-    public interface IView : IDisposable
+    public interface ISettingsView : IView
     {
         public event Action OnClickPlus;
         public void SetCountClicked(int count);

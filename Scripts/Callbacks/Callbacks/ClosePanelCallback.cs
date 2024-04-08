@@ -2,9 +2,9 @@
 {
     public class ClosePanelCallback : IPanelCallback
     {
-        public readonly IPanel Panel;
+        public readonly IViewMono Panel;
 
-        public ClosePanelCallback(IPanel panel)
+        public ClosePanelCallback(IViewMono panel)
         {
             Panel = panel;
         }

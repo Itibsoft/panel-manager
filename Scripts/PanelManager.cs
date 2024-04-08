@@ -30,10 +30,6 @@ namespace Itibsoft.PanelManager
 
         public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
         {
-#if EXTENJECT
-            _panelControllerFactory = panelControllerFactory;
-            PanelDispatcher = panelDispatcher;
-#else
             _panelControllerFactory = panelControllerFactory;
             
             if (_panelControllerFactory == default)
@@ -43,7 +39,6 @@ namespace Itibsoft.PanelManager
 #else
                 var panelFactory = new ResourcesPanelFactory();
 #endif
-
                 _panelControllerFactory = new PanelControllerFactory(panelFactory);
             }
 
@@ -51,9 +46,8 @@ namespace Itibsoft.PanelManager
             {
                 panelDispatcher = PanelDispatcherBuilder.Create().Build();
             }
-
+            
             PanelDispatcher = panelDispatcher;
-#endif
         }
 
 
@@ -104,14 +98,14 @@ namespace Itibsoft.PanelManager
 
             controller = _panelControllerFactory.Create(typePanelController, meta);
 
-            var panel = controller.GetPanel();
+            var viewMono = (IViewMono)controller.GetView();
 
             PanelReflector.SetPanelManager(controller, this);
-            PanelReflector.SetMeta(panel, meta);
+            PanelReflector.SetMeta(viewMono, meta);
 
-            PanelDispatcher.Cache(panel);
+            PanelDispatcher.Cache(viewMono);
 
-            PanelReflector.InvokeConstructorMethod(panel);
+            PanelReflector.InvokeConstructorMethod(viewMono);
             PanelReflector.InvokeOnLoadMethod(controller);
 
             controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
@@ -159,21 +153,21 @@ namespace Itibsoft.PanelManager
         private void OnReleasePanelHandle(ReleasePanelCallback callback)
         {
             var controller = callback.PanelController;
-            var panel = controller.GetPanel();
+            var viewMono = (IViewMono)controller.GetView();
 
             var type = controller.GetType();
             var hash = type.GetStableHash();
 
-            PanelReflector.ClearCached(panel);
+            PanelReflector.ClearCached(viewMono);
 
-            PanelDispatcher.Release(panel);
+            PanelDispatcher.Release(viewMono);
 
-            panel.Dispose();
-            panel.SetActive(false);
+            viewMono.Dispose();
+            viewMono.SetActive(false);
 
             controller.Dispose();
 
-            var panelGameObject = panel.GetGameObject();
+            var panelGameObject = viewMono.GetGameObject();
 
 #if ADDRESSABLES
             UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);

@@ -6,7 +6,7 @@ namespace Itibsoft.PanelManager.External
 {
     public class AddressablesPanelFactory : IPanelFactory
     {
-        public IPanel Create(PanelAttribute meta)
+        public IViewMono Create(IPanelMeta meta)
         {
             var panel = Addressables
                 .InstantiateAsync(meta.AssetId)

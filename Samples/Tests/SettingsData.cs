@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using a;
 
-namespace Itibsoft.PanelManager.Tests.Tests
+namespace Samples.Tests
 {
     [DataContract]
     public class SettingsData : IData

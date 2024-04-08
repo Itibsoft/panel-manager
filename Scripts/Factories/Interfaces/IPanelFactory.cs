@@ -1,7 +1,9 @@
-﻿namespace Itibsoft.PanelManager
+﻿using Itibsoft.PanelManager.Tests.Reflections;
+
+namespace Itibsoft.PanelManager
 {
     public interface IPanelFactory
     {
-        public IPanel Create(PanelAttribute meta);
+        public IViewMono Create(IPanelMeta meta);
     }
 }

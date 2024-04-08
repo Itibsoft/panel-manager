@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections;
+using a;
 using JetBrains.Annotations;
 
 namespace Itibsoft.PanelManager
 {
-    public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel> where TPanel : IPanel
+    public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel> where TPanel : IViewMono
     {
         public TPanel Panel { get; }
         
@@ -30,14 +31,14 @@ namespace Itibsoft.PanelManager
             var closeCallback = new ClosePanelCallback(Panel);
             _callbackDispatcher.InvokeCallback(closeCallback);
         }
-        
+
         public void Release()
         {
             var closeCallback = new ReleasePanelCallback(this);
             _callbackDispatcher.InvokeCallback(closeCallback);
         }
 
-        public IPanel GetPanel()
+        public IView GetView()
         {
             return Panel;
         }
