@@ -1,11 +1,12 @@
 ﻿using System;
 using Itibsoft.MVP;
+using UniRx;
 
 namespace Settings.Shared
 {
     public interface ISettingsView : IView
     {
-        public event Action OnClickPlus;
-        public void SetCountClicked(int count);
+        public ReactiveProperty<string> ClickedValueProperty { get; }
+        public ReactiveCommand IncrementValueCommand { get; }
     }
 }

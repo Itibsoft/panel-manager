@@ -1,11 +1,11 @@
 ﻿using System;
 using Itibsoft.MVP;
+using UniRx;
 
 namespace Settings.Shared
 {
     public interface ISettingsModel : IModel<SettingsData>
     {
-        public event Action OnChangedClicked;
-        public void PlusClick();
+        public ReactiveProperty<int> ClickedCountProperty { get; }
     }
 }

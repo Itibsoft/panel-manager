@@ -1,7 +1,7 @@
 {
     "name": "Settings.Shared",
     "rootNamespace": "Settings",
-    "references": ["GUID:03036cec3f3f28945a074a9f46db11ba"],
+    "references": ["GUID:03036cec3f3f28945a074a9f46db11ba","GUID:560b04d1a97f54a4e82edc0cbbb69285"],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

@@ -3,6 +3,7 @@ using Itibsoft.PanelManager;
 using Itibsoft.PanelManager.Tests;
 using Itibsoft.PanelManager.Tests.Reflections;
 using Settings.Shared;
+using UniRx;
 using UnityEngine;
 
 namespace Settings.Presenter
@@ -18,8 +19,8 @@ namespace Settings.Presenter
         
         public SettingsPresenter(ISettingsModel model, ISettingsView view) : base(model, view)
         {
-            view.OnClickPlus += OnView_ClickPlusHandle;
-            model.OnChangedClicked += OnModel_ChangedClickedHandle; 
+            view.IncrementValueCommand.Subscribe(_ => model.ClickedCountProperty.Value++);
+            model.ClickedCountProperty.Subscribe(value => View.ClickedValueProperty.Value = value.ToString());
         }
 
         protected override void OnViewOpened_After()
@@ -36,8 +37,6 @@ namespace Settings.Presenter
         {
             Debug.LogError("OnModelLoaded_After");
 
-            View.SetCountClicked(Model.Data.CountClicked);
-
             return Task.CompletedTask;
         }
 
@@ -45,19 +44,9 @@ namespace Settings.Presenter
         {
             Debug.LogError("OnModelLoad_Before");
             
-            View.SetCountClicked(0);
+            View.ClickedValueProperty.Value = "Not loaded data...";
 
             await Task.Delay(2 * 1000);
-        }
-        
-        private void OnView_ClickPlusHandle()
-        {
-            Model.PlusClick();
-        }
-        
-        private void OnModel_ChangedClickedHandle()
-        {
-            View.SetCountClicked(Model.Data.CountClicked);
         }
     }
 }
