@@ -37,6 +37,18 @@ namespace Itibsoft.PanelManager.Tests
             
             return (TPresenter)presenter;
         }
+
+        public TPresenter LoadPanel<TPresenter>(IModel model)
+            where TPresenter : IPresenter
+        {
+            var typePresenter = typeof(TPresenter);
+
+            var presenter = LoadPanelInternal(typePresenter, model);
+            
+            PanelReflector.SetPresenter(presenter, this);
+
+            return (TPresenter)presenter;
+        }
         
         public void RequestOpen(IPresenter presenter, Action<bool> callback)
         {
@@ -83,6 +95,30 @@ namespace Itibsoft.PanelManager.Tests
 
             presenter = _presenterFactory.Create(typePresenter, typeModel, meta);
 
+            CachePresenter(presenter, meta, hash);
+
+            return presenter;
+        }
+
+        private IPresenter LoadPanelInternal(Type typePresenter, IModel model)
+        {
+            var meta = PanelReflector.GetMeta(typePresenter);
+            var hash = typePresenter.GetStableHash();
+
+            if (_presenters.TryGetValue(hash, out var presenter))
+            {
+                return presenter;
+            }
+
+            presenter = _presenterFactory.Create(typePresenter, model, meta);
+            
+            CachePresenter(presenter, meta, hash);
+
+            return presenter;
+        }
+
+        private void CachePresenter(IPresenter presenter, IPanelMeta meta, ushort hash)
+        {
             var panel = presenter.GetView();
 
             if (panel is IViewMono viewMono)
@@ -92,8 +128,6 @@ namespace Itibsoft.PanelManager.Tests
             }
             
             _presenters.Add(hash, presenter);
-
-            return presenter;
         }
     }
 }

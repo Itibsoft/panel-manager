@@ -14,38 +14,32 @@ namespace Itibsoft.PanelManager.Tests
             PanelFactory = panelFactory;
         }
         
-        public virtual TPresenter Create<TPresenter>(Type typeModel, IPanelMeta meta) where TPresenter : IPresenter
-        {
-            var typePresenter = typeof(TPresenter);
-            
-            var presenter = Create(typePresenter, typeModel, meta);
-
-            return (TPresenter)presenter;
-        }
-        
         public IPresenter Create(Type typePresenter, Type typeModel, IPanelMeta meta)
         {
             var panel = PanelFactory.Create(meta);
+            var model = CreateInstance<IModel>(typeModel);
 
-            var parameters = new List<object>();
+            return Create(typePresenter, model, meta);
+        }
+        
+        public IPresenter Create(Type typePresenter, IModel model, IPanelMeta meta)
+        {
+            var panel = PanelFactory.Create(meta);
 
-            if (meta is PresenterMeta presenterMeta)
+            var parameters = new object []
             {
-                var model = CreateInstance(typeModel);
-                parameters.Add(model);
-            }
+                model,
+                panel
+            };
 
-            parameters.Add(panel);
+            var presenter = CreateInstance<IPresenter>(typePresenter, parameters);
 
-            var presenter = CreateInstance(typePresenter, parameters.ToArray());
-
-            return (IPresenter)presenter;
+            return presenter;
         }
 
-        public virtual object CreateInstance(Type type, params object[] arguments)
+        private static TInstance CreateInstance<TInstance>(Type type, params object[] arguments) where TInstance : class
         {
-            var instance = Activator.CreateInstance(type, arguments);
-            return instance;
+            return Activator.CreateInstance(type, arguments) as TInstance;
         }
     }
 }

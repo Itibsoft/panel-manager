@@ -10,15 +10,35 @@ namespace Itibsoft.PanelManager.Tests
         where TModel : IModel
         where TView : IView
     {
+        #region fields
+
+        #region protected fields
+
         protected MVPManager Manager { get; [UsedImplicitly] set; }
         protected TView View { get; }
         protected TModel Model { get; }
+
+        #endregion
+
+        #region private fields
+
+        private bool _isReady;
+
+        #endregion
+
+        #endregion
+
+        #region initialize
 
         protected PresenterBase(TModel model, TView view)
         {
             Model = model;
             View = view;
         }
+
+        #endregion
+
+        #region public methods
 
         public async Task Start()
         {
@@ -60,6 +80,10 @@ namespace Itibsoft.PanelManager.Tests
             return Model;
         }
 
+        #endregion
+
+        #region protected methods
+
         protected virtual void OnViewOpen_Before()
         {
         }
@@ -77,6 +101,8 @@ namespace Itibsoft.PanelManager.Tests
         {
             return Task.CompletedTask;
         }
+
+        #endregion
 
         public void Dispose()
         {

@@ -20,7 +20,7 @@ namespace Settings.Presenter
         public SettingsPresenter(ISettingsModel model, ISettingsView view) : base(model, view)
         {
             view.IncrementValueCommand.Subscribe(_ => model.ClickedCountProperty.Value++);
-            model.ClickedCountProperty.Subscribe(value => View.ClickedValueProperty.Value = value.ToString());
+            model.ClickedCountProperty.Subscribe(value => view.ClickedValueProperty.Value = value.ToString());
         }
 
         protected override void OnViewOpened_After()
