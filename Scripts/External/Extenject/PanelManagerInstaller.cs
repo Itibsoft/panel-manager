@@ -1,6 +1,7 @@
 ﻿#if EXTENJECT
 
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Itibsoft.PanelManager.External
 {
@@ -33,7 +34,16 @@ namespace Itibsoft.PanelManager.External
         {
             if (_panelDispatcherPrefab == default)
             {
-                var panelDispatcherInstance = PanelDispatcherBuilder.Create().Build();
+                var eventSystem = EventSystem.current;
+
+                var panelDispatcherBuilder = PanelDispatcherBuilder.Create();
+
+                if (eventSystem)
+                {
+                    panelDispatcherBuilder.SetEventSystem(eventSystem);
+                }
+                
+                var panelDispatcherInstance = panelDispatcherBuilder.Build();
                 panelDispatcherInstance.transform.SetParent(_group);
                 
                 container.Bind<PanelDispatcher>()

@@ -96,10 +96,6 @@ namespace Itibsoft.PanelManager
                 
                 eventSystemInstance.transform.SetParent(instance.transform);
             }
-            else
-            {
-                _eventSystem.transform.SetParent(instance.transform);
-            }
 
             Object.DontDestroyOnLoad(instance);
 
