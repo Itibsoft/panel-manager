@@ -20,12 +20,16 @@ namespace Itibsoft.PanelManager
         
         public void Open()
         {
+            OnOpen();
+            
             var openCallback = new OpenPanelCallback(Panel);
             _callbackDispatcher.InvokeCallback(openCallback);
         }
 
         public void Close()
         {
+            OnClose();
+            
             var closeCallback = new ClosePanelCallback(Panel);
             _callbackDispatcher.InvokeCallback(closeCallback);
         }
