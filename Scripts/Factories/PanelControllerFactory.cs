@@ -4,13 +4,6 @@ namespace Itibsoft.PanelManager
 {
     public class PanelControllerFactory : IPanelControllerFactory
     {
-        protected readonly IPanelFactory PanelFactory;
-        
-        public PanelControllerFactory(IPanelFactory panelFactory)
-        {
-            PanelFactory = panelFactory;
-        }
-        
         public virtual TPanelController Create<TPanelController>(PanelAttribute meta) where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
@@ -22,9 +15,7 @@ namespace Itibsoft.PanelManager
 
         public IPanelController Create(Type typePanelController, PanelAttribute meta)
         {
-            var panel = PanelFactory.Create(meta);
-
-            var controller = CreateInstance(typePanelController, panel);
+            var controller = CreateInstance(typePanelController);
 
             return (IPanelController)controller;
         }

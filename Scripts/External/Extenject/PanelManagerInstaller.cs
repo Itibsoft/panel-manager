@@ -1,5 +1,4 @@
 ﻿#if EXTENJECT
-
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -59,16 +58,6 @@ namespace Itibsoft.PanelManager.External
                     .AsSingle()
                     .Lazy();
             }
-            
-            container
-                .Bind<IPanelFactory>()
-#if ADDRESSABLES
-                .To<AddressablesPanelFactory>()
-#else
-                .To<ResourcesPanelFactory>()
-#endif
-                .AsSingle()
-                .Lazy();
 
             container
                 .Bind<IPanelControllerFactory>()

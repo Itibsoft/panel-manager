@@ -1,18 +1,15 @@
 ﻿#if EXTENJECT 
 
 using System;
+using JetBrains.Annotations;
 using Zenject;
 
 namespace Itibsoft.PanelManager.External
 {
+    [UsedImplicitly]
     public class ExtenjectPanelControllerFactory : PanelControllerFactory
     {
-        private readonly DiContainer _diContainer;
-
-        public ExtenjectPanelControllerFactory(IPanelFactory panelFactory, DiContainer diContainer) : base(panelFactory)
-        {
-            _diContainer = diContainer;
-        }
+        [Inject] private readonly DiContainer _diContainer;
 
         public override object CreateInstance(Type type, params object[] arguments)
         {

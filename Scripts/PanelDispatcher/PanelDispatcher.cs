@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Itibsoft.PanelManager
 {
-    public class PanelDispatcher : MonoBehaviour
+    public class PanelDispatcher : MonoBehaviour, PanelDispatcherBuilder.IPanelDispatcherProcessor
     {
         #region Fields
 
@@ -37,10 +37,6 @@ namespace Itibsoft.PanelManager
 
         private void Awake()
         {
-            Canvas = GetComponent<Canvas>();
-            CanvasScaler = GetComponent<CanvasScaler>();
-            GraphicRaycaster = GetComponent<GraphicRaycaster>();
-
             _windowContent ??= CreateContent("Windows [Content]");
             _overlayContent ??= CreateContent("Overlays [Content]");
             _cashedContent ??= CreateContent("Cached [Content]");
@@ -50,10 +46,9 @@ namespace Itibsoft.PanelManager
 
         #region Public Methods
 
-        public void SetWindow(IPanel panel) => SetPanelToContent(panel, true);
-        public void SetOverlay(IPanel panel) => SetPanelToContent(panel, true);
+        public void Activate(IPanel panel) => SetPanelToContent(panel, true);
         public void Cache(IPanel panel) => SetPanelToContent(panel, false);
-        public void Release(IPanel panel) => _contentsForPanels[panel.Meta.PanelType].Remove(panel);
+        public void Remove(IPanel panel) => _contentsForPanels[panel.Info.PanelType].Remove(panel);
 
         #endregion
 
@@ -69,21 +64,21 @@ namespace Itibsoft.PanelManager
                 panel.SetActive(true);
 
                 _contentsForPanels.GetOrCreateNew(PanelType.Cached).Remove(panel);
-                _contentsForPanels.AddOrCreateNew(panel.Meta.PanelType, panel, out var panels);
+                _contentsForPanels.AddOrCreateNew(panel.Info.PanelType, panel, out var panels);
 
-                content = panel.Meta.PanelType switch
+                content = panel.Info.PanelType switch
                 {
                     PanelType.Window => _windowContent,
                     PanelType.Overlay => _overlayContent,
                     _ => default
                 };
 
-                orderedPanels = panels.OrderBy(panelOrdered => panelOrdered.Meta.Order).ToList();
+                orderedPanels = panels.OrderBy(panelOrdered => panelOrdered.Info.Order).ToList();
             }
             else
             {
                 _contentsForPanels.AddOrCreateNew(PanelType.Cached, panel);
-                _contentsForPanels.GetOrCreateNew(panel.Meta.PanelType).Remove(panel);
+                _contentsForPanels.GetOrCreateNew(panel.Info.PanelType).Remove(panel);
 
                 content = _cashedContent;
                 panel.SetActive(false);
@@ -117,5 +112,9 @@ namespace Itibsoft.PanelManager
         }
 
         #endregion
+
+        void PanelDispatcherBuilder.IPanelDispatcherProcessor.SetCanvas(Canvas canvas) => Canvas = canvas;
+        void PanelDispatcherBuilder.IPanelDispatcherProcessor.SetCanvasScaler(CanvasScaler canvasScaler) => CanvasScaler = canvasScaler;
+        void PanelDispatcherBuilder.IPanelDispatcherProcessor.SetGraphicRaycaster(GraphicRaycaster graphicRaycaster) => GraphicRaycaster = graphicRaycaster;
     }
 }

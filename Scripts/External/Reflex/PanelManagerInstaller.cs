@@ -14,7 +14,7 @@ namespace Itibsoft.PanelManager.External
  			var panelFactory = new ResourcesPanelFactory();
 #endif
             
-			var panelControllerFactory = new ReflexPanelControllerFactory(panelFactory);
+			var panelControllerFactory = new ReflexPanelControllerFactory();
             
             var panelManager = PanelManagerBuilder
                 .Create()

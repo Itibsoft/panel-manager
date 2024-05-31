@@ -1,8 +1,8 @@
 {
   "name": "com.itibsoft.panelmanager",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "displayName": "Panel Manager",
-  "description": "Features:\n1. Readonly components for PanelDispatcher\n2. PanelDispather builder\n3. Support New event system (auto)\n\nFixed:\n1. Panel Manager constructors for External\n2. Refactore Safe Area\n3. Update Samples",
+  "description": "Global update for panel manager core.\nDocs: https://docs.google.com/document/d/1fMH0Z7nA2QIbtpGqlxivEC9J_MpT6ZDcW10yWmLreNM/edit?usp=sharing",
   "unity": "2021.3",
   "unityRelease": "0b5",
   "documentationUrl": "http://docs.itibsoft.ru/books/modules/page/panel-manager",

@@ -73,10 +73,16 @@ namespace Itibsoft.PanelManager
                     localScale = Vector3.zero
                 }
             };
+
+            var processor = (IPanelDispatcherProcessor)instance.GetComponent<PanelDispatcher>();
             
             var canvas = instance.GetComponent<Canvas>();
             var canvasScaler = instance.GetComponent<CanvasScaler>();
             var graphicRaycaster = instance.GetComponent<GraphicRaycaster>();
+            
+            processor.SetCanvas(canvas);
+            processor.SetCanvasScaler(canvasScaler);
+            processor.SetGraphicRaycaster(graphicRaycaster);
 
             canvas.renderMode = settings.RenderMode;
             canvas.pixelPerfect = settings.PixelPerfect;
@@ -137,6 +143,13 @@ namespace Itibsoft.PanelManager
             public bool IgnoreReversedGraphics { get; set; } = true;
 
             public GraphicRaycaster.BlockingObjects BlockingObjects { get; set; } = GraphicRaycaster.BlockingObjects.None;
+        }
+        
+        public interface IPanelDispatcherProcessor
+        {
+            public void SetCanvas(Canvas canvas);
+            public void SetCanvasScaler(CanvasScaler canvasScaler);
+            public void SetGraphicRaycaster(GraphicRaycaster graphicRaycaster);
         }
 
         #endregion

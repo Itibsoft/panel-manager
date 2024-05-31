@@ -1,82 +1,80 @@
-﻿using System;
-using JetBrains.Annotations;
-
-namespace Itibsoft.PanelManager
+﻿namespace Itibsoft.PanelManager
 {
-    public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel> where TPanel : IPanel
+    public abstract class PanelControllerBase<TPanel> : IPanelController<TPanel>, IPanelControllerProcessor where TPanel : IPanel
     {
-        public TPanel Panel { get; }
-        
-        protected IPanelManager PanelManager { get; [UsedImplicitly] set; }
-        
-        private readonly CallbackDispatcher _callbackDispatcher;
-        
-        protected PanelControllerBase(TPanel panel)
+        ushort IPanelControllerProcessor.Hash => _hash;
+        public TPanel Panel { get; private set; }
+        protected IPanelManager Manager { get; private set; }
+
+        private IPanelManagerProcessor _managerProcessor;
+        private IPanelFactory _panelFactory;
+        private readonly ushort _hash;
+
+        protected PanelControllerBase()
         {
-            Panel = panel;
-            
-            _callbackDispatcher = new CallbackDispatcher();
-        }
-        
-        public void Open()
-        {
-            OnOpen();
-            
-            var openCallback = new OpenPanelCallback(Panel);
-            _callbackDispatcher.InvokeCallback(openCallback);
+            _hash = GetType().GetStableHash();
         }
 
-        public void Close()
+        public void Open() => _managerProcessor.Open(this, Panel);
+        public void Close() => _managerProcessor.Close(this, Panel);
+        public void Release() => _managerProcessor.Release(this, Panel);
+        public IPanel GetPanel() => Panel;
+
+        protected virtual void OnLoad() { }
+        protected virtual void Initialize() { }
+        protected virtual void OnOpenBefore() { }
+        protected virtual void OnOpenAfter() { }
+        protected virtual void OnCloseBefore() { }
+        protected virtual void OnCloseAfter() { }
+        protected virtual void OnUnload() { }
+
+        void IPanelControllerProcessor.Setup(IPanelManager manager, IPanelFactory factory)
         {
-            OnClose();
-            
-            var closeCallback = new ClosePanelCallback(Panel);
-            _callbackDispatcher.InvokeCallback(closeCallback);
+            Manager = manager;
+            _managerProcessor = (IPanelManagerProcessor)manager;
+            _panelFactory = factory;
         }
         
-        public void Release()
+        void IPanelControllerProcessor.Load()
         {
-            var closeCallback = new ReleasePanelCallback(this);
-            _callbackDispatcher.InvokeCallback(closeCallback);
-        }
+            var type = GetType();
+            var meta = PanelReflector.GetMeta(type);
 
-        public IPanel GetPanel()
-        {
-            return Panel;
-        }
+            var info = new PanelInfo
+            {
+                PanelType = meta.PanelType,
+                Order = meta.Order,
+                AssetId = meta.AssetId
+            };
 
-        public void RegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback) where TCallback : IPanelCallback
-        {
-            _callbackDispatcher.RegisterCallback(callback);
-        }
+            Panel = (TPanel)_panelFactory.Create(meta);
 
-        public void UnRegisterCallback<TCallback>(PanelCallbackDelegate<TCallback> callback) where TCallback : IPanelCallback
-        {
-            _callbackDispatcher.UnRegisterCallback(callback);
-        }
-
-        protected virtual void OnLoad()
-        {
+            var processor = (IPanelProcessor)Panel;
             
+            processor.Setup(info);
+            
+            OnLoad();
         }
         
-        protected virtual void OnOpen()
-        {
-            
-        }
+        void IPanelControllerProcessor.Initialize() => Initialize();
+        void IPanelControllerProcessor.OpenBefore() => OnOpenBefore();
+        void IPanelControllerProcessor.OpenAfter() => OnOpenAfter();
+        void IPanelControllerProcessor.CloseBefore() => OnCloseBefore();
+        void IPanelControllerProcessor.CloseAfter() => OnCloseAfter();
         
-        protected virtual void OnClose()
+        void IPanelControllerProcessor.Unload()
         {
-            
-        }
+            Panel.SetActive(false);
 
-        protected virtual void OnUnload()
-        {
+            var panelGameObject = Panel.GetGameObject();
             
-        }
-        
-        void IDisposable.Dispose()
-        {
+#if ADDRESSABLES
+            UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);
+#else
+            UnityEngine.Object.DestroyImmediate(panelGameObject);
+            UnityEngine.Resources.UnloadUnusedAssets();
+#endif
+            
             OnUnload();
         }
     }

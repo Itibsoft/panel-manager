@@ -10,10 +10,6 @@ namespace Itibsoft.PanelManager.External
     {
         private Container _container;
 
-        public ReflexPanelControllerFactory(IPanelFactory panelFactory) : base(panelFactory)
-        {
-        }
-
         public void SetContainer(Container container)
         {
             _container = container;

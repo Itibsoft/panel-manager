@@ -26,6 +26,8 @@
 
         public IPanelManager Build()
         {
+            _panelControllerFactory ??= new PanelControllerFactory();
+            
             var panelManager = new PanelManager(_panelControllerFactory, _panelDispatcher);
             return panelManager;
         }

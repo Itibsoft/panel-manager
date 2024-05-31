@@ -6,7 +6,7 @@ namespace Itibsoft.PanelManager
 #if EXTENJECT
     [JetBrains.Annotations.UsedImplicitly]
 #endif
-    public class PanelManager : IPanelManager
+    public class PanelManager : IPanelManager, IPanelManagerProcessor
     {
         #region Fields
 
@@ -15,10 +15,11 @@ namespace Itibsoft.PanelManager
         public PanelDispatcher PanelDispatcher { get; }
 
         #endregion
-        
+
         #region Private Fields
 
         private readonly IPanelControllerFactory _panelControllerFactory;
+        private readonly IPanelFactory _panelFactory;
 
         private readonly Dictionary<ushort, IPanelController> _panelsCashed = new();
 
@@ -30,22 +31,13 @@ namespace Itibsoft.PanelManager
 
         public PanelManager(IPanelControllerFactory panelControllerFactory, PanelDispatcher panelDispatcher)
         {
-#if EXTENJECT
-            _panelControllerFactory = panelControllerFactory;
-            PanelDispatcher = panelDispatcher;
-#else
             _panelControllerFactory = panelControllerFactory;
             
-            if (_panelControllerFactory == default)
-            {
 #if ADDRESSABLES
-                var panelFactory = new External.AddressablesPanelFactory();
+            _panelFactory = new External.AddressablesPanelFactory();
 #else
-                var panelFactory = new ResourcesPanelFactory();
+            _panelFactory = new ResourcesPanelFactory();
 #endif
-
-                _panelControllerFactory = new PanelControllerFactory(panelFactory);
-            }
 
             if (panelDispatcher == default)
             {
@@ -53,9 +45,7 @@ namespace Itibsoft.PanelManager
             }
 
             PanelDispatcher = panelDispatcher;
-#endif
         }
-
 
         #endregion
 
@@ -64,19 +54,19 @@ namespace Itibsoft.PanelManager
         public TPanelController LoadPanel<TPanelController>() where TPanelController : IPanelController
         {
             var type = typeof(TPanelController);
-            
-            var controller = LoadPanelInternal(type);
-            
+
+            var controller = LoadController(type);
+
             return (TPanelController)controller;
         }
-        
+
         public void ClosePanels(params Type[] typeControllers)
         {
             for (int index = 0, count = typeControllers.Length; index < count; index++)
             {
                 var typeController = typeControllers[index];
 
-                var controller = LoadPanelInternal(typeController);
+                var controller = LoadController(typeController);
                 controller.Close();
             }
         }
@@ -87,12 +77,12 @@ namespace Itibsoft.PanelManager
             {
                 var typeController = typeControllers[index];
 
-                var controller = LoadPanelInternal(typeController);
+                var controller = LoadController(typeController);
                 controller.Open();
             }
         }
 
-        private IPanelController LoadPanelInternal(Type typePanelController)
+        private IPanelController LoadController(Type typePanelController)
         {
             var meta = PanelReflector.GetMeta(typePanelController);
             var hash = typePanelController.GetStableHash();
@@ -104,90 +94,45 @@ namespace Itibsoft.PanelManager
 
             controller = _panelControllerFactory.Create(typePanelController, meta);
 
+            var processor = (IPanelControllerProcessor)controller;
+
+            processor.Setup(this, _panelFactory);
+            processor.Load();
+            processor.Initialize();
+
             var panel = controller.GetPanel();
 
-            PanelReflector.SetPanelManager(controller, this);
-            PanelReflector.SetMeta(panel, meta);
-
             PanelDispatcher.Cache(panel);
-
-            PanelReflector.InvokeConstructorMethod(panel);
-            PanelReflector.InvokeOnLoadMethod(controller);
-
-            controller.RegisterCallback<OpenPanelCallback>(OnHandleOpenPanel);
-            controller.RegisterCallback<ClosePanelCallback>(OnHandleClosePanel);
-            controller.RegisterCallback<ReleasePanelCallback>(OnReleasePanelHandle);
 
             _panelsCashed.Add(hash, controller);
 
             return controller;
         }
-        
+
         #endregion
 
-        #region Private API (Methods)
-
-        #region Callback Handlers
-
-        private void OnHandleOpenPanel(OpenPanelCallback callback)
+        void IPanelManagerProcessor.Open(IPanelControllerProcessor processor, IPanel panel)
         {
-            var panel = callback.Panel;
-
-            switch (panel.Meta.PanelType)
-            {
-                case PanelType.Window:
-                    PanelDispatcher.SetWindow(panel);
-                    break;
-                case PanelType.Overlay:
-                    PanelDispatcher.SetOverlay(panel);
-                    break;
-                default: throw new ArgumentOutOfRangeException();
-            }
-
-            PanelReflector.InvokeOnOpenMethod(panel);
+            processor.OpenBefore();
+            PanelDispatcher.Activate(panel);
+            processor.OpenAfter();
         }
 
-        private void OnHandleClosePanel(ClosePanelCallback callback)
+        void IPanelManagerProcessor.Close(IPanelControllerProcessor processor, IPanel panel)
         {
-            var panel = callback.Panel;
-
-            PanelReflector.InvokeOnCloseMethod(panel);
-
+            processor.CloseBefore();
             PanelDispatcher.Cache(panel);
+            processor.CloseAfter();
         }
 
-        private void OnReleasePanelHandle(ReleasePanelCallback callback)
+        void IPanelManagerProcessor.Release(IPanelControllerProcessor processor, IPanel panel)
         {
-            var controller = callback.PanelController;
-            var panel = controller.GetPanel();
+            PanelDispatcher.Remove(panel);
 
-            var type = controller.GetType();
-            var hash = type.GetStableHash();
+            processor.Unload();
 
-            PanelReflector.ClearCached(panel);
-
-            PanelDispatcher.Release(panel);
-
-            panel.Dispose();
-            panel.SetActive(false);
-
-            controller.Dispose();
-
-            var panelGameObject = panel.GetGameObject();
-
-#if ADDRESSABLES
-            UnityEngine.AddressableAssets.Addressables.ReleaseInstance(panelGameObject);
-#else
-            UnityEngine.Object.DestroyImmediate(panelGameObject);
-            UnityEngine.Resources.UnloadUnusedAssets();
-#endif
-
-            _panelsCashed.Remove(hash);
+            _panelsCashed.Remove(processor.Hash);
         }
-
-        #endregion
-
-        #endregion
 
 #if EXTENJECT
         [JetBrains.Annotations.UsedImplicitly]

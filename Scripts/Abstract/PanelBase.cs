@@ -1,17 +1,20 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Itibsoft.PanelManager
 {
-	public abstract class PanelBase : MonoBehaviour, IPanel
+	public abstract class PanelBase : MonoBehaviour, IPanel, IPanelProcessor
 	{
+		public PanelInfo Info { get; private set; }
 		public PanelState State { get; private set; } = PanelState.CLOSED;
-		public PanelAttribute Meta { get; [UsedImplicitly] protected set; }
 		public RectTransform RectTransform => _rectTransform;
 
 		private RectTransform _rectTransform;
 
-		private void Awake()
+		protected virtual void Start() { }
+
+		protected virtual void Awake()
 		{
 			_rectTransform = GetComponent<RectTransform>();
 		}
@@ -43,9 +46,9 @@ namespace Itibsoft.PanelManager
 			return gameObject;
 		}
 
-		public virtual void Dispose()
+		void IPanelProcessor.Setup(PanelInfo info)
 		{
-			
+			Info = info;
 		}
 	}
 }
